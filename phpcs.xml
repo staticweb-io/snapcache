@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<ruleset name="SnapCache">
+  <description>SnapCache Project Coding Standard</description>
+  <config name="testVersion" value="7.2-"/>
+  <!--
+    Note: Applied WP standard override to allow tabs instead
+          of spaces, however, PHP CBF is using 4 spaces - Gray
+
+    Reference: https://stackoverflow.com/a/45154669/3701444
+  -->
+  <arg name="colors" />
+  <arg name="tab-width" value="2" />
+  <rule ref="Squiz.PHP.DiscouragedFunctions" />
+  <!-- Custom line length validation -->
+  <rule ref="Generic.Files.LineLength">
+    <properties>
+      <property name="lineLimit" value="100" />
+      <property name="absoluteLineLimit" value="120" />
+    </properties>
+  </rule>
+  <rule ref="Generic.WhiteSpace.DisallowTabIndent" />
+  <rule ref="Generic.WhiteSpace.ScopeIndent">
+    <properties>
+      <property name="indent" value="2" />
+      <property name="tabIndent" value="false" />
+    </properties>
+  </rule>
+  <rule ref="Squiz.Commenting">
+    <exclude name="Squiz.Commenting.ClassComment"/>
+    <exclude name="Squiz.Commenting.FileComment"/>
+    <exclude name="Squiz.Commenting.FunctionComment"/>
+    <exclude name="Squiz.Commenting.VariableComment"/>
+    <exclude name="Squiz.Commenting.LongConditionClosingComment"/>
+  </rule>
+  <rule ref="WordPress">
+    <exclude name="Generic.Commenting.DocComment.ShortNotCapital" />
+    <exclude name="Generic.Commenting.DocComment.MissingShort" />
+    <exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning" />
+    <exclude name="Generic.Functions.OpeningFunctionBraceKernighanRitchie.BraceOnNewLine" />
+    <exclude name="Generic.WhiteSpace.DisallowSpaceIndent" />
+    <exclude name="Squiz.Commenting.ClassComment.Missing" />
+    <exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
+    <exclude name="Squiz.Commenting.FunctionCommentThrowTag" />
+    <exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
+    <exclude name="Squiz.Commenting.PostStatementComment.Found" />
+    <exclude name="Squiz.PHP.CommentedOutCode.Found" />
+    <exclude name="Squiz.PHP.DisallowMultipleAssignments.Found" />
+    <exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeEnd" />
+    <exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned" />
+    <exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+    <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+    <exclude name="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid" />
+    <exclude name="WordPress.PHP.DiscouragedPHPFunctions" />
+    <exclude name="WordPress.PHP.YodaConditions.NotYoda" />
+    <!-- Forcing exceptions to be escaped is bad practice.
+     See: https://github.com/WordPress/WordPress-Coding-Standards/issues/2374 -->
+    <exclude name="WordPress.Security.EscapeOutput.ExceptionNotEscaped"/>
+    <exclude name="WordPress.Security.EscapeOutput.OutputNotEscaped" />
+    <exclude name="WordPress.Security.ValidatedSanitizedInput" />
+    <exclude name="WordPress.WP.AlternativeFunctions" />
+    <exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />
+  </rule>
+  <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+</ruleset>

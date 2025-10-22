@@ -1,0 +1,58 @@
+{
+    "name": "staticweb-io/snapcache",
+    "description": "WordPress object cache plugin",
+    "homepage": "https://github.com/staticweb-io/snapcache",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "John Shaffer",
+            "email": "jdsha@pm.me",
+            "homepage": "https://john.shaffe.rs"
+        }
+    ],
+    "type": "wordpress-plugin",
+    "support": {
+        "issues": "https://github.com/staticweb-io/snapcache/issues",
+        "forum": "https://github.com/staticweb-io/snapcache/issues",
+        "docs": "https://deepwiki.com/staticweb-io/snapcache",
+        "source": "https://github.com/staticweb-io/snapcache"
+    },
+    "require": {
+        "php": ">=8.1",
+        "ext-mbstring": "*"
+    },
+    "require-dev": {
+        "szepeviktor/phpstan-wordpress": "*",
+        "squizlabs/php_codesniffer": "*",
+        "phpunit/phpunit": "*",
+        "dealerdirect/phpcodesniffer-composer-installer": "*",
+        "wp-coding-standards/wpcs": "*",
+        "phpcompatibility/php-compatibility": "*",
+        "php-parallel-lint/php-parallel-lint": "*",
+        "mikey179/vfsstream": "*",
+        "php-stubs/wp-cli-stubs": "^2.12",
+        "rector/rector": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "SnapCache\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SnapCache\\": "tests/integration/"
+        }
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "classmap-authoritative": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform": {
+            "php": "8.1.33"
+        }
+    }
+}
