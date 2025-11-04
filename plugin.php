@@ -66,7 +66,7 @@ function snapcache_plugin_action_links( $links ) {
  * Prevent WP scripts from loading which aren't useful
  * on a statically exported site
  */
-function snapcacheegister_scripts(): void {
+function snapcache_deregister_scripts(): void {
     wp_dequeue_script( 'wp-embed' );
     wp_deregister_script( 'wp-embed' );
     wp_dequeue_script( 'comment-reply' );
