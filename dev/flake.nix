@@ -374,6 +374,7 @@
               phpunit
               phpPackages.composer
               shellcheck
+              watchexec
               wp-cli
             ];
             inputsFrom = [ config.process-compose."default".services.outputs.devShell ];
