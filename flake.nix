@@ -34,14 +34,14 @@
           pname = "${name}-composer-deps";
           version = "1.0.0";
           src = composerSrc;
-          vendorHash = "sha256-oM/4UiqnStiV2Gio+e+e4vQNenxPQNSASH+Wmz9fgCg=";
+          vendorHash = "sha256-t5gFxNCDPfRKp/2lNoa4TuF5ajHZ9Kul+JsViJMqEPc=";
         });
         composerVendorDev = php.mkComposerVendor (finalAttrs: {
           composerNoDev = false;
           pname = "${name}-composer-deps-dev";
           version = "1.0.0";
           src = composerSrc;
-          vendorHash = "sha256-BPObMSl1omekqbNxZAwOxF98tUiNeAZ/xueGCOTZjVw=";
+          vendorHash = "sha256-fgxhTbsl8wPCx30AebLIZx3GNWySo761vrLbthWnWDs=";
         });
         snapCacheSrc = pkgs.lib.cleanSourceWith {
           src = self;
