@@ -39,7 +39,7 @@ class Memcached {
      */
     public static function getRandomServer(
         \Memcached $mc,
-    ): array {
+    ): ?array {
         $servers = $mc->getServerList();
         $total_weight = 0;
 
@@ -62,6 +62,8 @@ class Memcached {
                 return $server;
             }
         }
+
+        return null;
     }
 
     /**
@@ -76,6 +78,10 @@ class Memcached {
         ?string &$error_message = null,
     ) {
         $server = self::getRandomServer( $mc );
+        if ( $server === null ) {
+            return null;
+        }
+
         $host = $server['host'];
         $port = $server['port'];
 
