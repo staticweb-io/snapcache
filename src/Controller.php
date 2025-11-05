@@ -36,6 +36,13 @@ class Controller {
             self::deactivate( ... ),
         );
 
+        add_action(
+            'admin_init',
+            self::installObjectCache( ... ),
+            10,
+            0,
+        );
+
         return self::getInstance();
     }
 
