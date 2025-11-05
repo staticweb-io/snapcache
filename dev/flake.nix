@@ -341,7 +341,7 @@
                       TMPDIR="$(realpath ./tmp)"
                       mkdir -p "$TMPDIR"
                       echo 'SELECT version();' | mysql -h 127.0.0.1 --port="${toString dbPort}" --user="${dbUserName}" --password="${dbUserPass}" "${dbName}"
-                      cp -r --no-preserve=mode ${snapCachePkgs.composerVendorDev}/. .
+                      cp -r --no-preserve=mode ${snapCachePkgs.composerVendor}/. .
                       cp -r ${snapCacheLib.snapCacheSrc}/. .
                       composer dump-autoload
                       WORDPRESS_DIR="$(realpath ./data/wordpress1)"

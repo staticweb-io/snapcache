@@ -30,13 +30,6 @@
             rel == "composer.json" || rel == "composer.lock";
         };
         composerVendor = php.mkComposerVendor (finalAttrs: {
-          composerNoDev = true;
-          pname = "${name}-composer-deps";
-          version = "1.0.0";
-          src = composerSrc;
-          vendorHash = "sha256-t5gFxNCDPfRKp/2lNoa4TuF5ajHZ9Kul+JsViJMqEPc=";
-        });
-        composerVendorDev = php.mkComposerVendor (finalAttrs: {
           composerNoDev = false;
           pname = "${name}-composer-deps-dev";
           version = "1.0.0";
@@ -88,16 +81,14 @@
             ''
               export PLUGIN_DIR="$TMPDIR/${name}"
               mkdir -p "$PLUGIN_DIR"
-              cp -r --no-preserve=mode "${composerVendorDev}/vendor" .
+              cp -r --no-preserve=mode "${composerVendor}/vendor" .
               cp -r --no-preserve=mode "${snapCacheSrc}"/* .
 
               # Lock certain constants and run rector to remove dead code
               cp ${constantsFile} constants.php
               just rector
 
-              rm -rf vendor
-              cp -r --no-preserve=mode "${composerVendor}/vendor" .
-              composer dump-autoload --no-dev --optimize
+              composer install --no-cache --no-dev --optimize-autoloader
 
               mkdir -p "$out"
               cp -r composer.json plugin.php readme.txt src uninstall.php vendor "$out"
@@ -140,7 +131,7 @@
             export PLUGIN_DIR="$TMPDIR/${name}"
             mkdir -p "$PLUGIN_DIR"
             cd "$PLUGIN_DIR"
-            cp -a "${composerVendorDev}/vendor" .
+            cp -a "${composerVendor}/vendor" .
             cp -r --no-preserve=mode "$src"/* .
             composer lint
             composer phpcs
@@ -153,7 +144,7 @@
         checks = { inherit snapCacheCheck; };
         lib = { inherit snapCacheSrc; };
         packages = {
-          inherit composerVendorDev composerVendor snapCache;
+          inherit composerVendor snapCache;
           plugin = snapCache;
           pluginGitHubSrc = snapCacheGitHubSrc;
           pluginWpOrg = snapCacheWpOrg;
