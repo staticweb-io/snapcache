@@ -17,6 +17,12 @@ if ( ! defined( 'ABSPATH' ) ) {
     die;
 }
 
+// Only run code for admins and the CLI
+// All functionality for the public site is loaded by the drop-in(s)
+if ( ! defined( 'WP_CLI' ) && ! is_admin() ) {
+    return;
+}
+
 define( 'SNAPCACHE_VERSION', '0.1.0' );
 define( 'SNAPCACHE_PATH', plugin_dir_path( __FILE__ ) );
 
