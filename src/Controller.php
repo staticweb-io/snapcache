@@ -115,7 +115,7 @@ class Controller {
     public static function installObjectCache(
         bool $force = false,
     ): void {
-        $obj_cache = get_dropins()['object-cache.php'];
+        $obj_cache = get_dropins()['object-cache.php'] ?? null;
 
         if ( $force || $obj_cache === null
         || ( $obj_cache['TextDomain'] === 'snapcache'
