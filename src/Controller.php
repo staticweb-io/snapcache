@@ -84,9 +84,8 @@ class Controller {
     public static function deactivate(
         bool $network_wide = false,
     ): void {
-        $obj_cache_domain = get_dropins()['object-cache.php']['TextDomain'];
-
-        if ( 'snapcache' === $obj_cache_domain ) {
+        $obj_cache = get_dropins()['object-cache.php'] ?? null;
+        if ( $obj_cache !== null && $obj_cache['TextDomain'] === 'snapcache' ) {
             FilesHelper::deleteFile(
                 WP_CONTENT_DIR . '/object-cache.php',
             );
