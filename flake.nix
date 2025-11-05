@@ -70,7 +70,7 @@
         };
         buildsnapCacheSrc =
           constantsFile:
-          runCommand "snapCache-source"
+          runCommand "snapcache-source"
             {
               nativeBuildInputs = [
                 just
