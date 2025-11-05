@@ -64,10 +64,7 @@ class Controller {
     public static function activate(
         bool $network_wide = false,
     ): void {
-        FilesHelper::copyFile(
-            SNAPCACHE_PATH . 'src/drop-in/object-cache.php',
-            WP_CONTENT_DIR . '/object-cache.php',
-        );
+        self::installObjectCache( true );
 
         if ( $network_wide ) {
             self::callInEachBlog(
@@ -101,5 +98,25 @@ class Controller {
     }
 
     public static function deactivateForSingleSite(): void {
+    }
+
+    /**
+     * Install our object cache if `$force`, if there is no object
+     * cache, or if there is an existing SnapCache object-cache.php
+     * and the version does not match our current version.
+     */
+    public static function installObjectCache(
+        bool $force = false,
+    ): void {
+        $obj_cache = get_dropins()['object-cache.php'];
+
+        if ( $force || $obj_cache === null
+        || ( $obj_cache['TextDomain'] === 'snapcache'
+            && $obj_cache['Version'] !== SNAPCACHE_VERSION ) ) {
+            FilesHelper::copyFile(
+                SNAPCACHE_PATH . 'src/drop-in/object-cache.php',
+                WP_CONTENT_DIR . '/object-cache.php',
+            );
+        }
     }
 }
