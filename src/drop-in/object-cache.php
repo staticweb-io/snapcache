@@ -13,8 +13,10 @@
  * License URI:       https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 
-// phpcs:disable Squiz.PHP.DiscouragedFunctions
 // Allow discouraged functions so we can use error_log here.
+// phpcs:disable Squiz.PHP.DiscouragedFunctions
+// phpcs:disable WordPress.PHP.DevelopmentFunctions
+
 // phpcs:disable Universal.Files.SeparateFunctionsFromOO
 
 declare(strict_types=1);
@@ -61,6 +63,15 @@ if ( ! class_exists( 'Memcached' ) ) {
             // https://www.php.net/manual/en/memcached.construct.php
             $mc = new Memcached( $persistent_id );
 
+            if ( SNAPCACHE_MEMCACHED_USE_BINARY === true
+                && $mc->getOption( Memcached::OPT_BINARY_PROTOCOL ) === false ) {
+                $result = $mc->setOption( Memcached::OPT_BINARY_PROTOCOL, true );
+
+                if ( $result === false ) {
+                    error_log( 'Failed to enable binary protocol for Memcached' );
+                }
+            }
+
             // Since the Memcached instance persists across
             // requests, we must take care not to add servers
             // that are already in the list.
@@ -96,10 +107,10 @@ if ( ! class_exists( 'Memcached' ) ) {
             $key = $prefix . $group . ':' . $key . $this->cache_key_salt_hash;
 
             // Unfortunately WordPress uses a lot of keys with spaces,
-            // and we have to do something about them because memcached
-            // doesn't allow that.
-            // TODO: Check binary protocol
-            $key = str_replace( ' ', '_', $key );
+            // and the memcached text protocol doesn't allow that.
+            if ( ! SNAPCACHE_MEMCACHED_USE_BINARY ) {
+                $key = str_replace( ' ', '_', $key );
+            }
 
             // Truncate long keys and add a hash.
             // Memcached only allows 250 bytes for keys.
@@ -835,6 +846,10 @@ if ( ! class_exists( 'Memcached' ) ) {
 
         if ( ! defined( 'SNAPCACHE_MEMCACHED_PERSISTENT_ID' ) ) {
             define( 'SNAPCACHE_MEMCACHED_PERSISTENT_ID', 'sd-mc' );
+        }
+
+        if ( ! defined( 'SNAPCACHE_MEMCACHED_USE_BINARY' ) ) {
+            define( 'SNAPCACHE_MEMCACHED_USE_BINARY', true );
         }
 
         global $memcached_servers;
