@@ -75,14 +75,34 @@ class Controller {
 
         if ( $network_wide ) {
             self::callInEachBlog(
-                self::activateForSingleSite( ... ),
+                self::clearAllOptionsCache( ... ),
             );
+        } else {
+            self::clearAllOptionsCache();
         }
-
-        self::activateForSingleSite();
     }
 
-    public static function activateForSingleSite(): void {
+    /**
+     * Prevent a situation where alloptions is cached with
+     * the plugin not in active_plugins, and when the plugin
+     * is reactivated, the stale active_plugins remains cached.
+     * This prevents the plugin being seen as active.
+     * Mitigate by clearing alloptions whenever we add, change,
+     * or remove object-cache.php.
+     */
+    public static function clearAllOptionsCache(): void {
+        // We call both wp_cache_delete and $mc->delete because
+        // they could be different caches in some cases, and it's
+        // better to make sure all possible caches get cleared.
+        if ( function_exists( 'wp_cache_delete' ) ) {
+            wp_cache_delete( 'alloptions', 'options' );
+        }
+
+        $smc = Memcached::getSnapCacheMemcached();
+
+        if ( $smc instanceof \SnapCacheMemcached ) {
+            $smc->delete( 'alloptions', 'options' );
+        }
     }
 
     public static function deactivate(
@@ -97,14 +117,11 @@ class Controller {
 
         if ( $network_wide ) {
             self::callInEachBlog(
-                self::deactivateForSingleSite( ... ),
+                self::clearAllOptionsCache( ... ),
             );
+        } else {
+            self::clearAllOptionsCache();
         }
-
-        self::deactivateForSingleSite();
-    }
-
-    public static function deactivateForSingleSite(): void {
     }
 
     /**
