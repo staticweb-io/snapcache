@@ -71,7 +71,7 @@ class Controller {
     public static function activate(
         bool $network_wide = false,
     ): void {
-        self::installObjectCache( true );
+        self::installObjectCache();
 
         if ( $network_wide ) {
             self::callInEachBlog(
@@ -125,18 +125,28 @@ class Controller {
     }
 
     /**
-     * Install our object cache if `$force`, if there is no object
-     * cache, or if there is an existing SnapCache object-cache.php
-     * and the version does not match our current version.
+     * Install our object cache if one of these is true:
+     * - There is currently no object cache and $memcached_servers
+     *   is set and we can get a connection to memcached.
+     * - There is an existing SnapCache object-cache.php
+     *   and the version does not match our current version.
      */
-    public static function installObjectCache(
-        bool $force = false,
-    ): void {
+    public static function installObjectCache(): void {
         $obj_cache = get_dropins()['object-cache.php'] ?? null;
 
-        if ( $force || $obj_cache === null
-        || ( $obj_cache['TextDomain'] === 'snapcache'
-            && $obj_cache['Version'] !== SNAPCACHE_VERSION ) ) {
+        if ( $obj_cache === null ) {
+            global $memcached_servers;
+            if ( $memcached_servers !== null && ! empty( $memcached_servers ) ) {
+                $mc = Memcached::getMemcached();
+                if ( $mc->getVersion() !== false ) {
+                    FilesHelper::copyFile(
+                        SNAPCACHE_PATH . 'src/drop-in/object-cache.php',
+                        WP_CONTENT_DIR . '/object-cache.php',
+                    );
+                }
+            }
+        } elseif ( $obj_cache['TextDomain'] === 'snapcache'
+                && $obj_cache['Version'] !== SNAPCACHE_VERSION ) {
             FilesHelper::copyFile(
                 SNAPCACHE_PATH . 'src/drop-in/object-cache.php',
                 WP_CONTENT_DIR . '/object-cache.php',
