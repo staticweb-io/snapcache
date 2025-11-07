@@ -28,18 +28,6 @@
         maxMemory = 100;
         port = 11212;
       };
-      mysqlConfig = {
-        enable = true;
-        ensureUsers = [
-          {
-            name = "www";
-            ensurePermissions = {
-              "${dbName}.*" = "ALL PRIVILEGES";
-            };
-          }
-        ];
-        initialDatabases = [ { name = dbName; } ];
-      };
       # Note that /tmp/xd has to be created to receive traces
       phpOptions = ''
         opcache.interned_strings_buffer = 16
@@ -47,45 +35,6 @@
         opcache.jit_buffer_size = 8M
         upload_max_filesize=1024M
       '';
-      nixosModules = {
-        wordpress-server = {
-          security.sudo.extraRules = [
-            {
-              users = [ "www" ];
-              commands = [
-                {
-                  command = "ALL";
-                  options = [ "NOPASSWD" ];
-                }
-              ];
-            }
-          ];
-          services.memcached = memcachedConfig;
-          services.mysql = mysqlConfig;
-          # Create the home dir on the volume
-          systemd.tmpfiles.rules = [ "d /home/www 0755 www www -" ];
-          users.users.nginx = {
-            extraGroups = [ "www" ];
-          };
-          users.users.php = {
-            extraGroups = [ "www" ];
-            isSystemUser = true;
-            group = "php";
-          };
-          users.users.www = {
-            extraGroups = [
-              "network"
-              "wheel"
-            ];
-            group = "www";
-            home = "/home/www";
-            isNormalUser = true;
-            password = "";
-          };
-          users.groups.php = { };
-          users.groups.www = { };
-        };
-      };
     in
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
@@ -379,8 +328,5 @@
             inputsFrom = [ config.process-compose."default".services.outputs.devShell ];
           };
         };
-    }
-    // {
-      inherit nixosModules;
     };
 }
