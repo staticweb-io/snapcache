@@ -257,7 +257,7 @@
                 httpConfig = nginxHttpConfig "./data/wordpress1" "${
                   config.services.phpfpm."phpfpm1".dataDir
                 }/phpfpm.sock";
-                port = 8381; # A useless server is started on this port
+                port = serverPort;
               };
               services.phpfpm."phpfpm1" = {
                 enable = true;
