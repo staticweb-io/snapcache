@@ -65,6 +65,21 @@ trait ITTrait {
     }
 
     /**
+     * Evaluate a string expression in the context of WP_CLI.
+     * Since the WP testing framework only supports a very
+     * ancient version of PHPUnit, we don't use it and
+     * instead create a small testing system using
+     * `wp eval`.
+     */
+    public function evalEmbeddedTest( string $test_filename ): void {
+        $test_helpers = file_get_contents( __DIR__ . '/embed/add-test-helpers.php' );
+        $test_helpers = preg_replace( '/^<\?php\s*/', '', $test_helpers );
+        $teststr = file_get_contents( __DIR__ . '/embed/' . $test_filename );
+        $teststr = preg_replace( '/^<\?php\s*/', '', $teststr );
+        $this->wpCli( [ 'eval', $test_helpers . $teststr ] );
+    }
+
+    /**
      * Install a plugin from a string
      */
     public function installStringPlugin(
