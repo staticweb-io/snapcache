@@ -82,6 +82,35 @@ if ( ! class_exists( 'Memcached' ) ) {
             $this->mc = $mc;
         }
 
+        /**
+         * Sets global state if needed and returns
+         * a new instance of self.
+         */
+        public static function initAndBuild(): self {
+            if ( ! defined( 'WP_CACHE_KEY_SALT' ) ) {
+                define( 'WP_CACHE_KEY_SALT', '' );
+            }
+
+            if ( ! defined( 'SNAPCACHE_MEMCACHED_PERSISTENT_ID' ) ) {
+                define( 'SNAPCACHE_MEMCACHED_PERSISTENT_ID', 'sd-mc' );
+            }
+
+            if ( ! defined( 'SNAPCACHE_MEMCACHED_USE_BINARY' ) ) {
+                define( 'SNAPCACHE_MEMCACHED_USE_BINARY', true );
+            }
+
+            global $memcached_servers;
+
+            $servers = $memcached_servers ?? [ [ '127.0.0.1', 11211 ] ];
+
+            return new SnapCacheMemcached(
+                SNAPCACHE_MEMCACHED_PERSISTENT_ID,
+                $servers,
+                (string) get_current_blog_id(),
+                WP_CACHE_KEY_SALT,
+            );
+        }
+
         private function can_add(): bool
         {
             return ! wp_suspend_cache_addition();
@@ -840,30 +869,9 @@ if ( ! class_exists( 'Memcached' ) ) {
     }
 
     function wp_cache_init(): void {
-        if ( ! defined( 'WP_CACHE_KEY_SALT' ) ) {
-            define( 'WP_CACHE_KEY_SALT', '' );
-        }
-
-        if ( ! defined( 'SNAPCACHE_MEMCACHED_PERSISTENT_ID' ) ) {
-            define( 'SNAPCACHE_MEMCACHED_PERSISTENT_ID', 'sd-mc' );
-        }
-
-        if ( ! defined( 'SNAPCACHE_MEMCACHED_USE_BINARY' ) ) {
-            define( 'SNAPCACHE_MEMCACHED_USE_BINARY', true );
-        }
-
-        global $memcached_servers;
-
-        $servers = $memcached_servers ?? [ [ '127.0.0.1', 11211 ] ];
-
         global $wp_object_cache;
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride
-        $wp_object_cache = new SnapCacheMemcached(
-            SNAPCACHE_MEMCACHED_PERSISTENT_ID,
-            $servers,
-            (string) get_current_blog_id(),
-            WP_CACHE_KEY_SALT,
-        );
+        $wp_object_cache = SnapCacheMemcached::initAndBuild();
         wp_using_ext_object_cache( true );
     }
 
