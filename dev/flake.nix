@@ -366,6 +366,7 @@
               inputs.hyperfine-flake.packages.${system}.scripts
               jq
               just
+              nixfmt-rfc-style
               omnix
               parallel
               php
