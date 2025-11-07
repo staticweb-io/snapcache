@@ -81,7 +81,6 @@
                     apcu
                     imagick
                     memcached
-                    xdebug
                   ]);
               };
               phpIniFile = pkgs.runCommand "php.ini" { preferLocalBuild = true; } ''
