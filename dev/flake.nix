@@ -226,6 +226,7 @@
               imports = [ inputs.services-flake.processComposeModules.default ];
               services.memcached."memcached1" = {
                 enable = true;
+                port = memcachedConfig.port;
                 startArgs = [
                   "--memory-limit=${toString memcachedConfig.maxMemory}M"
                   "--port=${toString memcachedConfig.port}"
