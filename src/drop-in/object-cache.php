@@ -766,6 +766,10 @@ if ( ! class_exists( 'Memcached' ) ) {
         }
     }
 
+    if ( function_exists( 'wp_cache_add' ) ) {
+        return;
+    }
+
     function wp_cache_add(
         int|string $key,
         mixed $data,

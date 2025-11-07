@@ -5,8 +5,9 @@ namespace SnapCache;
 class Memcached {
     /*
      * Returns the \Memcached instance used by the
-     * object cache. Returns null if the object cache
-     * is not loaded or is not managed by this plugin.
+     * object cache, or a new \Memcached instance if
+     * the object cache is not loaded or is not managed
+     * by this plugin.
      *
      * @param bool $required If true, throw an exception
      * if unable to find a \Memcached instance.
@@ -15,15 +16,23 @@ class Memcached {
         $required = false,
     ): ?\Memcached {
         global $wp_object_cache;
+
         if ( class_exists( 'SnapCacheMemcached' )
         && $wp_object_cache instanceof \SnapCacheMemcached ) {
             return $wp_object_cache->mc;
         }
+
+        require_once SNAPCACHE_PATH . 'src/drop-in/object-cache.php';
+        if ( class_exists( 'SnapCacheMemcached' ) ) {
+            return \SnapCacheMemcached::initAndBuild()->mc;
+        }
+
         if ( $required ) {
             throw new SnapCacheException(
                 'Memcached is not enabled or is not managed by this plugin.'
             );
         }
+
         return null;
     }
 
