@@ -805,7 +805,7 @@ if ( ! class_exists( 'Memcached' ) ) {
         $wp_object_cache->add_non_persistent_groups( $groups );
     }
 
-    function wp_cache_close(): true {
+    function wp_cache_close(): bool {
         return true;
     }
 
