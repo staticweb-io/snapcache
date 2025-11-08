@@ -118,10 +118,12 @@
           ];
           nativeCheckInputs = [
             jq
+            just
             phpPackages.composer
           ];
 
           doCheck = true;
+          dontUseJustInstall = true;
 
           buildPhase = ''
             mkdir -p $out
@@ -133,10 +135,7 @@
             cd "$PLUGIN_DIR"
             cp -a "${composerVendor}/vendor" .
             cp -r --no-preserve=mode "$src"/* .
-            composer lint
-            composer phpcs
-            # Run directly because composer swallows the exit code
-            php vendor/bin/rector --debug --dry-run
+            just _check_no_test
           '';
         };
       in
