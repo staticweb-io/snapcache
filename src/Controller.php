@@ -131,10 +131,17 @@ class Controller {
      * - There is an existing SnapCache object-cache.php
      *   and the version does not match our current version.
      */
-    public static function installObjectCache(): void {
+    public static function installObjectCache(
+        bool $force = false,
+    ): void {
         $obj_cache = get_dropins()['object-cache.php'] ?? null;
 
-        if ( $obj_cache === null ) {
+        if ( $force ) {
+            FilesHelper::copyFile(
+                SNAPCACHE_PATH . 'src/drop-in/object-cache.php',
+                WP_CONTENT_DIR . '/object-cache.php',
+            );
+        } elseif ( $obj_cache === null ) {
             global $memcached_servers;
             if ( $memcached_servers !== null && ! empty( $memcached_servers ) ) {
                 $mc = Memcached::getMemcached();

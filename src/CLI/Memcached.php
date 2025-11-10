@@ -2,6 +2,7 @@
 
 namespace SnapCache\CLI;
 
+use SnapCache\Controller;
 use WP_CLI;
 
 /**
@@ -19,6 +20,37 @@ class Memcached {
         return \SnapCache\Memcached::getMemcached(
             required: true,
         );
+    }
+
+    /**
+     * Installs the memcached object cache.
+     * By default, verifies that memcached can be
+     * connected to before installing.
+     *
+     * ## OPTIONS
+     *
+     * [--force]
+     * : Install even if a connection to memcached
+     *   cannot be verified.
+     */
+    public function install( array $args, array $assoc_args ): void {
+        $cfg = Args::parse(
+            $args,
+            $assoc_args,
+            [],
+            [ 'force' => [] ],
+        );
+
+        if ( ! $cfg['force'] && ! self::getMemcached() instanceof \Memcached ) {
+            WP_CLI::error(
+                'Could not connect to memcached.',
+                1,
+            );
+            return;
+        }
+
+        Controller::installObjectCache( true );
+        Controller::clearAllOptionsCache();
     }
 
     /**
