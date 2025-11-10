@@ -211,6 +211,7 @@
                 wp option update permalink_structure "/%postname%/"
                 rm -rf "./wp-content/plugins/plugin-check" "./wp-content/plugins/snapCache"
                 wp plugin install --force --activate ${snapCache}/snapcache.zip
+                wp snapcache memcached install
                 wp plugin install --force ${wpPluginCheck}
               '';
             };
