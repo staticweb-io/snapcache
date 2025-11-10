@@ -37,4 +37,12 @@ final class MemcachedObjectCacheTest extends TestCase {
         $lines = $this->wpCli( [ 'cache', 'get', $k, $group ] );
         $this->assertContains( $v, $lines );
     }
+
+    /**
+     * Test that `wp cache type` shows correct output.
+     */
+    public function testType(): void {
+        $lines = $this->wpCli( [ 'cache', 'type' ] );
+        $this->assertContains( 'Memcache', $lines );
+    }
 }
