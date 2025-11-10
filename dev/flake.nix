@@ -335,7 +335,6 @@
               omnix
               parallel
               php
-              phpunit
               phpPackages.composer
               shellcheck
               watchexec
