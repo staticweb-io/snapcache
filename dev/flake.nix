@@ -28,13 +28,6 @@
         maxMemory = 100;
         port = 11212;
       };
-      # Note that /tmp/xd has to be created to receive traces
-      phpOptions = ''
-        opcache.interned_strings_buffer = 16
-        opcache.jit = 1255
-        opcache.jit_buffer_size = 8M
-        upload_max_filesize=1024M
-      '';
     in
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
