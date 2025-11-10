@@ -3,6 +3,7 @@
 namespace SnapCache\CLI;
 
 use SnapCache\Controller;
+use SnapCache\FilesHelper;
 use WP_CLI;
 
 /**
@@ -174,5 +175,37 @@ class Memcached {
             $output,
             $keys,
         );
+    }
+
+    /**
+     * Uninstalls the memcached object cache.
+     */
+    public function uninstall( array $args, array $assoc_args ): void {
+        Args::parse(
+            $args,
+            $assoc_args,
+            [],
+            [],
+        );
+
+        $obj_cache = get_dropins()['object-cache.php'] ?? null;
+
+        if ( $obj_cache !== null && $obj_cache['TextDomain'] === 'snapcache' ) {
+            FilesHelper::deleteFile(
+                WP_CONTENT_DIR . '/object-cache.php',
+            );
+            Controller::clearAllOptionsCache();
+            WP_CLI::log( 'Removed object cache.' );
+        } elseif ( $obj_cache === null ) {
+            WP_CLI::error(
+                'There is no object cache installed.',
+                1,
+            );
+        } else {
+            WP_CLI::error(
+                'The object cache installed is not managed by SnapCache.',
+                1,
+            );
+        }
     }
 }
