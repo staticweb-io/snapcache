@@ -320,6 +320,7 @@
           devShells.default = pkgs.mkShell {
             buildInputs = [
               fd
+              inferno
               inputs.hyperfine-flake.packages.${system}.default
               inputs.hyperfine-flake.packages.${system}.scripts
               jq
