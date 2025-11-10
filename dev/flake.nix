@@ -50,25 +50,36 @@
         }:
         let
           getEnv = name: default: (if "" == builtins.getEnv name then default else builtins.getEnv name);
+          enableXDebug = getEnv "ENABLE_XDEBUG" "false" == "true";
+          phpExtensionsName = phpPackage + "Extensions";
+          phpExtensions = pkgs.${phpExtensionsName};
           phpPackage = getEnv "PHP_PACKAGE" "php";
           snapCachePackage = getEnv "SNAPCACHE_PACKAGE" "pluginWpOrg";
           wordpressPackage = getEnv "WORDPRESS_PACKAGE" "default";
           snapCacheLib = inputs.snapcache.lib.${system};
           snapCachePkgs = inputs.snapcache.packages.${system};
           snapCache = snapCachePkgs.${snapCachePackage};
-          # Note that /tmp/xd has to be created to receive traces
           phpOptions = ''
             opcache.interned_strings_buffer = 16
             opcache.jit = 1255
             opcache.jit_buffer_size = 8M
             upload_max_filesize=1024M
-            xdebug.mode=trace
-            xdebug.output_dir=/tmp/xd
-            xdebug.start_with_request=trigger
-            xdebug.trace_format=3
-            xdebug.trace_output_name = xdebug.trace.%t.%s
-            xdebug.trigger_value = "e5c2217a39ff4e9ad4c5f99243bb47de68ee112aa685f79264686b202591ec80"
-          '';
+          ''
+          + (
+            if enableXDebug then
+              # Note that /tmp/xd has to be created to receive traces
+              ''
+                xdebug.mode=trace
+                xdebug.output_dir=/tmp/xd
+                xdebug.start_with_request=trigger
+                xdebug.trace_format=3
+                xdebug.trace_output_name = xdebug.trace.%t.%s
+                xdebug.trigger_value = "e5c2217a39ff4e9ad4c5f99243bb47de68ee112aa685f79264686b202591ec80"
+                zend_extension=${phpExtensions.xdebug}/lib/php/extensions/xdebug.so
+              ''
+            else
+              ""
+          );
           overlay =
             self: super:
             let
@@ -77,11 +88,15 @@
                 extensions =
                   { enabled, all }:
                   enabled
-                  ++ (with all; [
-                    apcu
-                    imagick
-                    memcached
-                  ]);
+                  ++ (
+                    with all;
+                    [
+                      apcu
+                      imagick
+                      memcached
+                    ]
+                    ++ (if enableXDebug then [ xdebug ] else [ ])
+                  );
               };
               phpIniFile = pkgs.runCommand "php.ini" { preferLocalBuild = true; } ''
                 cat ${php}/etc/php.ini > $out
