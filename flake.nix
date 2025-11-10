@@ -34,7 +34,7 @@
           pname = "${name}-composer-deps-dev";
           version = "1.0.0";
           src = composerSrc;
-          vendorHash = "sha256-fgxhTbsl8wPCx30AebLIZx3GNWySo761vrLbthWnWDs=";
+          vendorHash = "sha256-Zv58dQ8i+9cs+WtCqMEl9vNBF8EyWSoXZ8EI2uDhcMY=";
         });
         snapCacheSrc = pkgs.lib.cleanSourceWith {
           src = self;
