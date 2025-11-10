@@ -210,8 +210,8 @@
                 wp core install --url="https://example.com" --title=WordPress --admin_user=user --admin_email="user@example.com" --admin_password=pass
                 wp option update permalink_structure "/%postname%/"
                 rm -rf "./wp-content/plugins/plugin-check" "./wp-content/plugins/snapCache"
-                wp plugin install --activate ${snapCache}/snapcache.zip
-                wp plugin install ${wpPluginCheck}
+                wp plugin install --force --activate ${snapCache}/snapcache.zip
+                wp plugin install --force ${wpPluginCheck}
               '';
             };
         in
