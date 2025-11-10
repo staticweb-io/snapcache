@@ -9,8 +9,11 @@
 /vendor/
 /vendor_prefixed/
 node_modules/
+bench*.json
+bench*.png
 coverage/
 data
+flame*.svg
 admin/*.js*
 *.img
 *.pid
