@@ -28,9 +28,9 @@ _check_no_test: _lint _validate _phpcs
 
 # Run development server
 [working-directory('dev')]
-dev CLEAN="false":
+dev CLEAN="false" DEBUG="false":
     {{ if CLEAN == "true" { "rm -rf data" } else { "" } }}
-    nix run
+    {{ if DEBUG == "true" { "ENABLE_XDEBUG=true nix run --impure " } else { "nix run" } }}
 
 # Format source and then check for unfixable issues
 format: && _format-php
