@@ -35,7 +35,7 @@ dev CLEAN="false" DEBUG="false":
 # Format source and then check for unfixable issues
 format: && _format-php
     just --fmt --unstable
-    fd --glob "*.nix" -x nixfmt
+    fd -e nix -x nixfmt
 
 _format-php:
     just _phpcbf || true && just _phpcs
