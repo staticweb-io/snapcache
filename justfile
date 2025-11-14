@@ -12,6 +12,10 @@ list:
     @# First command in the file is invoked by default
     @just --list
 
+# Run benchmarks
+bench *args:
+    finefile bench {{ args }}
+
 # Build plugin zip for GitHub release
 build:
     nix build .#plugin
@@ -36,6 +40,7 @@ dev CLEAN="false" DEBUG="false":
 format: && _format-php
     just --fmt --unstable
     fd -e nix -x nixfmt
+    fd "finefile\.toml" -x finefile format
 
 _format-php:
     just _phpcbf || true && just _phpcs

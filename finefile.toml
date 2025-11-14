@@ -1,0 +1,60 @@
+[defaults.commands]
+warmup-runs = 1 # Parse PHP files, etc.
+
+[defaults.commands.env]
+COMMON_SETUP = """
+cd "$WPDIR"
+wp cache flush
+wp plugin deactivate --all
+rm -f wp-content/object-cache.php
+"""
+LITESPEED_SETUP = """
+LITESPEEDCACHE="$(nix build ./dev#litespeed-cache --print-out-paths)"
+eval "$COMMON_SETUP"
+wp plugin install --force "$LITESPEEDCACHE"
+wp plugin activate litespeed-cache
+cp wp-content/plugins/litespeed-cache/lib/object-cache.php wp-content/
+wp option set litespeed.conf.cache ''
+wp option set litespeed.conf.object 1
+wp option set litespeed.conf.object-admin 1
+wp option set litespeed.conf.object-host localhost
+wp option set litespeed.conf.object-kind ''
+wp option set litespeed.conf.object-life 360
+wp option set litespeed.conf.object-persistent 1
+wp option set litespeed.conf.object-port 11212
+wp option set litespeed.conf.object-transients 1
+"""
+SNAPCACHE_SETUP = """
+eval "$COMMON_SETUP"
+wp plugin activate snapcache
+wp snapcache memcached install
+"""
+WPDIR = "dev/data/wordpress1"
+
+[commands.litespeed-memcached]
+setup = """eval "$LITESPEED_SETUP" """
+warmup-runs = 10
+command = "curl http://localhost:8889"
+tags = ["memcached"]
+
+[commands.litespeed-memcached-cold]
+setup = """eval "$LITESPEED_SETUP" """
+prepare = """wp --path="$WPDIR" cache flush"""
+command = "curl http://localhost:8889"
+tags = ["cold", "memcached"]
+
+[commands.snapcache-memcached]
+setup = """eval "$SNAPCACHE_SETUP" """
+warmup-runs = 10
+command = "curl http://localhost:8889"
+tags = ["memcached", "snapcache"]
+
+[commands.snapcache-memcached-cold]
+setup = """eval "$SNAPCACHE_SETUP" """
+prepare = """wp --path="$WPDIR" cache flush"""
+command = "curl http://localhost:8889"
+tags = ["cold", "memcached", "snapcache"]
+
+[plots.whisker]
+file = "plot-whisker.png"
+type = "whisker"

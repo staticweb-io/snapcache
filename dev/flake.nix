@@ -1,6 +1,11 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    finefile = {
+      url = "github:john-shaffer/finefile";
+      inputs.hyperfine-flake.follows = "hyperfine-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
     hyperfine-flake = {
@@ -320,6 +325,7 @@
           devShells.default = pkgs.mkShell {
             buildInputs = [
               fd
+              inputs.finefile.packages.${system}.default
               inferno
               inputs.hyperfine-flake.packages.${system}.default
               inputs.hyperfine-flake.packages.${system}.scripts
@@ -335,6 +341,12 @@
               wp-cli
             ];
             inputsFrom = [ config.process-compose."default".services.outputs.devShell ];
+          };
+          packages = {
+            litespeed-cache = fetchurl {
+              url = "https://downloads.wordpress.org/plugin/litespeed-cache.7.6.2.zip";
+              hash = "sha256-BVkpCYn+4+8z5QLnmeFsVS5zHWo/aG4eWmTC5mdxgnk=";
+            };
           };
         };
     };
