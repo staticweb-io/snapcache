@@ -341,6 +341,11 @@
               wp-cli
             ];
             inputsFrom = [ config.process-compose."default".services.outputs.devShell ];
+            shellHook = ''
+              echo
+              echo -e "Run '\033[1mjust <recipe>\033[0m' to get started"
+              just --list
+            '';
           };
           packages = {
             litespeed-cache = fetchurl {
