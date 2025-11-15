@@ -278,7 +278,7 @@ if ( ! class_exists( 'Memcached' ) ) {
             $expire = self::to_memcache_expiration( $expire );
             $arr = [];
             // Memcached doesn't support addMulti, so we
-            // iterater over many add() calls.
+            // iterate over many add() calls.
             foreach ( $data as $key => $v ) {
                 $k = $this->cache_key( $key, $group );
                 if ( $this->mc->add( $k, $v, $expire ) ) {
