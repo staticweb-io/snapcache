@@ -145,7 +145,7 @@ class Controller {
             global $memcached_servers;
             if ( $memcached_servers !== null && ! empty( $memcached_servers ) ) {
                 $mc = Memcached::getMemcached();
-                if ( $mc->getVersion() !== false ) {
+                if ( $mc instanceof \Memcached && $mc->getVersion() !== false ) {
                     FilesHelper::copyFile(
                         SNAPCACHE_PATH . 'src/drop-in/object-cache.php',
                         WP_CONTENT_DIR . '/object-cache.php',
