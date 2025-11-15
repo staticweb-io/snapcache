@@ -451,7 +451,7 @@ if ( ! class_exists( 'Memcached' ) ) {
             }
 
             $data = $this->mc->get( $k );
-            $found = $this->mc->getResultCode() === Memcached::RES_SUCCESS;
+            $found = $data !== false || $this->mc->getResultCode() === Memcached::RES_SUCCESS;
 
             $this->local_cache[ $k ] = $found
             ? self::maybe_clone( $data )
