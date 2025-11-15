@@ -43,6 +43,11 @@ prepare = """wp --path="$WPDIR" cache flush"""
 command = "curl http://localhost:8889"
 tags = ["cold", "memcached"]
 
+[commands.no-object-cache]
+setup = """eval "$COMMON_SETUP" """
+warmup-runs = 10
+command = "curl http://localhost:8889"
+
 [commands.snapcache-memcached]
 setup = """eval "$SNAPCACHE_SETUP" """
 warmup-runs = 10
