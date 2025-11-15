@@ -25,7 +25,13 @@ wp option set litespeed.conf.object-port 11212
 wp option set litespeed.conf.object-transients 1
 """
 SNAPCACHE_SETUP = """
+SNAPCACHE="$(nix build .#pluginWpOrgSrc --print-out-paths)"
 eval "$COMMON_SETUP"
+SNAPCACHE_DIR=wp-content/plugins/snapcache
+mkdir -p "$SNAPCACHE_DIR"
+chmod u+w -R "$SNAPCACHE_DIR"
+rsync -avz --delete --chmod=F664,D775 --owner "$SNAPCACHE"/ "$SNAPCACHE_DIR"/
+chattr -a -R "$SNAPCACHE_DIR"
 wp plugin activate snapcache
 wp snapcache memcached install
 """
