@@ -216,8 +216,7 @@
               text = ''
                 set -eu
                 mkdir -p ${dataDir}
-                chmod ug+w ${dataDir}/wp-config.php || true
-                cp "${wpConfig dbHost dbUser}" "${dataDir}/wp-config.php"
+                cp --no-preserve=mode "${wpConfig dbHost dbUser}" "${dataDir}/wp-config.php"
                 update-wordpress ${dataDir} ${wordpress}
                 cd ${dataDir}
                 wp core install --url="https://example.com" --title=WordPress --admin_user=user --admin_email="user@example.com" --admin_password=pass
