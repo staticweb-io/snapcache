@@ -94,7 +94,7 @@ if ( ! class_exists( 'Memcached' ) ) {
             }
 
             if ( ! defined( 'SNAPCACHE_MEMCACHED_PERSISTENT_ID' ) ) {
-                define( 'SNAPCACHE_MEMCACHED_PERSISTENT_ID', 'sd-mc' );
+                define( 'SNAPCACHE_MEMCACHED_PERSISTENT_ID', 'snapcache' );
             }
 
             if ( ! defined( 'SNAPCACHE_PRESEEDS' ) ) {
