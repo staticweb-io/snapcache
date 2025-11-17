@@ -27,7 +27,7 @@ if ( ! class_exists( 'Memcached' ) ) {
     class SnapCacheMemcached {
         public Memcached $mc;
 
-        private string $cache_key_salt_hash;
+        private string $cache_key_salt_hash = '';
         // Array of group_name => true
         private array $global_groups;
         // Temporary cache that vanishes at
