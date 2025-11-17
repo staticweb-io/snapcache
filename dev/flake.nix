@@ -279,7 +279,7 @@
                 extraConfig = {
                   "catch_workers_output" = "yes";
                   "pm" = "ondemand";
-                  "pm.max_children" = "32";
+                  "pm.max_children" = "64";
                 };
                 package = php;
                 phpOptions = phpOptions;
