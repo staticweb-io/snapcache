@@ -113,7 +113,9 @@ if ( ! class_exists( 'Memcached' ) ) {
             }
 
             if ( ! defined( 'SNAPCACHE_MEMCACHED_USE_BINARY' ) ) {
-                define( 'SNAPCACHE_MEMCACHED_USE_BINARY', true );
+                // The binary protocol has severe perfomance issues
+                // See https://github.com/memcached/memcached/issues/775
+                define( 'SNAPCACHE_MEMCACHED_USE_BINARY', false );
             }
 
             global $memcached_servers;
