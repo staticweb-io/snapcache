@@ -157,7 +157,7 @@ if ( ! class_exists( 'Memcached' ) ) {
 
             // Unfortunately WordPress uses a lot of keys with spaces,
             // and the memcached text protocol doesn't allow that.
-            if ( ! SNAPCACHE_MEMCACHED_USE_BINARY ) {
+            if ( ! SNAPCACHE_MEMCACHED_USE_BINARY && str_contains( $key, ' ' ) ) {
                 $key = str_replace( ' ', '_', $key );
             }
 
