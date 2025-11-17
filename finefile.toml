@@ -1,5 +1,4 @@
 [defaults.commands]
-warmup-runs = 1 # Parse PHP files, etc.
 
 [defaults.commands.env]
 COMMON_SETUP = """
@@ -7,6 +6,9 @@ cd "$WPDIR"
 wp cache flush
 wp plugin deactivate --all
 rm -f wp-content/object-cache.php
+"""
+GET_HOME_PARALLEL = """
+hey -n 500 http://localhost:8889
 """
 LITESPEED_SETUP = """
 LITESPEEDCACHE="$(nix build ./dev#litespeed-cache --print-out-paths)"
@@ -39,30 +41,29 @@ WPDIR = "dev/data/wordpress1"
 
 [commands.litespeed-memcached]
 setup = """eval "$LITESPEED_SETUP" """
-warmup-runs = 10
-command = "curl http://localhost:8889"
+command = """ eval "$GET_HOME_PARALLEL" """
 tags = ["memcached"]
 
 [commands.litespeed-memcached-cold]
 setup = """eval "$LITESPEED_SETUP" """
 prepare = """wp --path="$WPDIR" cache flush"""
+warmup-runs = 1
 command = "curl http://localhost:8889"
 tags = ["cold", "memcached"]
 
 [commands.no-object-cache]
 setup = """eval "$COMMON_SETUP" """
-warmup-runs = 10
-command = "curl http://localhost:8889"
+command = """ eval "$GET_HOME_PARALLEL" """
 
 [commands.snapcache-memcached]
 setup = """eval "$SNAPCACHE_SETUP" """
-warmup-runs = 10
-command = "curl http://localhost:8889"
+command = """ eval "$GET_HOME_PARALLEL" """
 tags = ["memcached", "snapcache"]
 
 [commands.snapcache-memcached-cold]
 setup = """eval "$SNAPCACHE_SETUP" """
 prepare = """wp --path="$WPDIR" cache flush"""
+warmup-runs = 1
 command = "curl http://localhost:8889"
 tags = ["cold", "memcached", "snapcache"]
 

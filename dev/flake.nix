@@ -325,6 +325,7 @@
           devShells.default = pkgs.mkShell {
             buildInputs = [
               fd
+              hey
               inputs.finefile.packages.${system}.default
               inferno
               inputs.hyperfine-flake.packages.${system}.default
