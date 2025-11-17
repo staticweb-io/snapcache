@@ -37,6 +37,8 @@ if ( ! class_exists( 'Memcached' ) ) {
         private readonly object $local_missing_marker;
         // Array of group_name => array of keys => values
         private array $non_persistent_groups;
+        // Array of pre-seeded keys
+        private ?array $preseed_keys = null;
 
         public function __construct(
             string $persistent_id,
@@ -95,6 +97,21 @@ if ( ! class_exists( 'Memcached' ) ) {
                 define( 'SNAPCACHE_MEMCACHED_PERSISTENT_ID', 'sd-mc' );
             }
 
+            if ( ! defined( 'SNAPCACHE_PRESEEDS' ) ) {
+                define(
+                    'SNAPCACHE_PRESEEDS',
+                    [
+                        [ 'is_blog_installed', 'default' ],
+                        [ 'alloptions', 'options' ],
+                        [ 'notoptions', 'options' ],
+                        [ get_current_blog_id() . ':notoptions', 'site-options', true ],
+                        [ 'doing_cron', 'transient' ],
+                        [ 'wp_core_block_css_files', 'transient' ],
+                        [ 'wp_styles_for_blocks', 'transient' ],
+                    ]
+                );
+            }
+
             if ( ! defined( 'SNAPCACHE_MEMCACHED_USE_BINARY' ) ) {
                 define( 'SNAPCACHE_MEMCACHED_USE_BINARY', true );
             }
@@ -119,6 +136,7 @@ if ( ! class_exists( 'Memcached' ) ) {
         private function cache_key(
             int|string $key,
             string $group,
+            bool $force_global = false,
         ): string {
             if ( $key === '' ) {
                 throw new Exception( 'Cache key cannot be empty' );
@@ -129,7 +147,7 @@ if ( ! class_exists( 'Memcached' ) ) {
                 $group = 'default';
             }
 
-            $prefix = isset( $this->global_groups[ $group ] )
+            $prefix = ( $force_global || isset( $this->global_groups[ $group ] ) )
             ? $this->global_prefix
             : $this->non_global_prefix;
 
@@ -234,6 +252,10 @@ if ( ! class_exists( 'Memcached' ) ) {
                 return true;
             }
 
+            if ( $this->preseed_keys ) {
+                $this->fetch_all();
+            }
+
             $expire = self::to_memcache_expiration( $expire );
             if ( $this->mc->add( $k, $data, $expire ) ) {
                 $this->local_cache[ $k ] = self::maybe_clone( $data );
@@ -273,6 +295,10 @@ if ( ! class_exists( 'Memcached' ) ) {
                     }
                 }
                 return $arr;
+            }
+
+            if ( $this->preseed_keys ) {
+                $this->fetch_all();
             }
 
             $expire = self::to_memcache_expiration( $expire );
@@ -339,6 +365,10 @@ if ( ! class_exists( 'Memcached' ) ) {
                 return true;
             }
 
+            if ( $this->preseed_keys ) {
+                $this->fetch_all();
+            }
+
             if ( $this->mc->delete( $k ) ) {
                 $this->local_cache[ $k ] = $this->local_missing_marker;
                 return true;
@@ -374,6 +404,10 @@ if ( ! class_exists( 'Memcached' ) ) {
                 return array_fill_keys( $ks, true );
             }
 
+            if ( $this->preseed_keys ) {
+                $this->fetch_all();
+            }
+
             $results = $this->mc->deleteMulti( $ks );
 
             foreach ( $results as $k => $v ) {
@@ -388,6 +422,37 @@ if ( ! class_exists( 'Memcached' ) ) {
             }
 
             return $results;
+        }
+
+        /**
+         * Fetch all outstanding values from a
+         * Memcached->getDelayed() request.
+         * Results are loaded into the local cache.
+         */
+        private function fetch_all(): void {
+            $results = $this->mc->fetchAll();
+            if ( $results === false ) {
+                return;
+            }
+
+            $preseed_map = array_fill_keys(
+                $this->preseed_keys,
+                true,
+            );
+            $this->preseed_keys = null;
+
+            foreach ( $results as $result ) {
+                $k = $result ['key'];
+                $this->local_cache[ $k ] = $result['value'];
+                unset( $preseed_map[ $k ] );
+            }
+
+            // We want to seed misses as well because the extra
+            // processing to track misses is cheap compared to
+            // the cost of making an extra memcached request.
+            foreach ( array_keys( $preseed_map ) as $miss ) {
+                $this->local_cache[ $miss ] = $this->local_missing_marker;
+            }
         }
 
         /**
@@ -438,6 +503,10 @@ if ( ! class_exists( 'Memcached' ) ) {
                 }
                 $found = false;
                 return false;
+            }
+
+            if ( $this->preseed_keys ) {
+                $this->fetch_all();
             }
 
             if ( ! $force && array_key_exists( $k, $this->local_cache ) ) {
@@ -502,6 +571,10 @@ if ( ! class_exists( 'Memcached' ) ) {
                     }
                 }
                 return $arr;
+            }
+
+            if ( $this->preseed_keys ) {
+                $this->fetch_all();
             }
 
             if ( ! $force ) {
@@ -586,6 +659,29 @@ if ( ! class_exists( 'Memcached' ) ) {
         }
 
         /**
+         * Make a delayed request for values that we want
+         * to seed before they are needed.
+         */
+        public function get_seeds(): void {
+            if ( empty( SNAPCACHE_PRESEEDS ) ) {
+                return;
+            }
+
+            $preseed_keys = array_map(
+                fn( array $preseed ): string => $this->cache_key(
+                    $preseed[0],
+                    $preseed[1],
+                    $preseed[2] ?? false,
+                ),
+                SNAPCACHE_PRESEEDS,
+            );
+
+            if ( $this->mc->getDelayed( $preseed_keys ) ) {
+                $this->preseed_keys = $preseed_keys;
+            }
+        }
+
+        /**
          * Increment the value of a numeric cache item.
          * Returns false if the cache item does not exist
          * or is not numeric.
@@ -644,6 +740,10 @@ if ( ! class_exists( 'Memcached' ) ) {
                 return true;
             }
 
+            if ( $this->preseed_keys ) {
+                $this->fetch_all();
+            }
+
             $expire = self::to_memcache_expiration( $expire );
             $result = $this->mc->replace( $k, $data, $expire );
 
@@ -678,6 +778,10 @@ if ( ! class_exists( 'Memcached' ) ) {
                 $data = self::maybe_clone( $data );
                 $this->non_persistent_groups[ $group ][ $k ] = $data;
                 return true;
+            }
+
+            if ( $this->preseed_keys ) {
+                $this->fetch_all();
             }
 
             $expire = self::to_memcache_expiration( $expire );
@@ -716,6 +820,10 @@ if ( ! class_exists( 'Memcached' ) ) {
                     $arr[ $key ] = true;
                 }
                 return $arr;
+            }
+
+            if ( $this->preseed_keys ) {
+                $this->fetch_all();
             }
 
             $expire = self::to_memcache_expiration( $expire );
@@ -876,6 +984,7 @@ if ( ! class_exists( 'Memcached' ) ) {
         global $wp_object_cache;
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride
         $wp_object_cache = SnapCacheMemcached::initAndBuild();
+        $wp_object_cache->get_seeds();
         wp_using_ext_object_cache( true );
     }
 
