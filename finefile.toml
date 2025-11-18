@@ -1,4 +1,5 @@
 [defaults.commands]
+warmup-runs = 2
 
 [defaults.commands.env]
 COMMON_SETUP = """
