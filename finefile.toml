@@ -1,4 +1,5 @@
 [defaults.commands]
+command = """eval "$GET_HOME_PARALLEL" """
 warmup-runs = 2
 
 [defaults.commands.env]
@@ -69,26 +70,21 @@ WPDIR = "dev/data/wordpress1"
 
 [commands.litespeed-memcached]
 setup = """eval "$LITESPEED_CACHE_MEMCACHED_SETUP" """
-command = """eval "$GET_HOME_PARALLEL" """
 tags = ["memcached"]
 
 [commands.litespeed-redis]
 setup = """eval "$LITESPEED_CACHE_REDIS_SETUP" """
-command = """eval "$GET_HOME_PARALLEL" """
 tags = ["redis"]
 
 [commands.no-object-cache]
 setup = """eval "$COMMON_SETUP" """
-command = """ eval "$GET_HOME_PARALLEL" """
 
 [commands.redis-cache]
 setup = """eval "$REDIS_CACHE_SETUP" """
-command = """ eval "$GET_HOME_PARALLEL" """
 tags = ["redis"]
 
 [commands.snapcache-memcached]
 setup = """eval "$SNAPCACHE_SETUP" """
-command = """ eval "$GET_HOME_PARALLEL" """
 tags = ["memcached", "snapcache"]
 
 [plots.whisker]
