@@ -29,7 +29,6 @@
       dbUserPass = "8BVMm2jqDE6iADNyfaVCxoCzr3eBY6Ep";
       serverPort = 8889;
       memcachedConfig = {
-        enable = true;
         maxMemory = 100;
         port = 11212;
       };
