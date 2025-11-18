@@ -67,13 +67,6 @@ setup = """eval "$LITESPEED_CACHE_MEMCACHED_SETUP" """
 command = """eval "$GET_HOME_PARALLEL" """
 tags = ["memcached"]
 
-[commands.litespeed-memcached-cold]
-setup = """eval "$LITESPEED_SETUP" """
-prepare = """wp --path="$WPDIR" cache flush"""
-warmup-runs = 1
-command = "curl http://localhost:8889"
-tags = ["cold", "memcached"]
-
 [commands.litespeed-redis]
 setup = """eval "$LITESPEED_CACHE_REDIS_SETUP" """
 command = """eval "$GET_HOME_PARALLEL" """
@@ -88,24 +81,10 @@ setup = """eval "$REDIS_CACHE_SETUP" """
 command = """ eval "$GET_HOME_PARALLEL" """
 tags = ["redis"]
 
-[commands.redis-cache-cold]
-setup = """eval "$REDIS_CACHE_SETUP" """
-prepare = """wp --path="$WPDIR" cache flush"""
-warmup-runs = 1
-command = "curl http://localhost:8889"
-tags = ["cold", "redis"]
-
 [commands.snapcache-memcached]
 setup = """eval "$SNAPCACHE_SETUP" """
 command = """ eval "$GET_HOME_PARALLEL" """
 tags = ["memcached", "snapcache"]
-
-[commands.snapcache-memcached-cold]
-setup = """eval "$SNAPCACHE_SETUP" """
-prepare = """wp --path="$WPDIR" cache flush"""
-warmup-runs = 1
-command = "curl http://localhost:8889"
-tags = ["cold", "memcached", "snapcache"]
 
 [plots.whisker]
 file = "plot-whisker.png"
