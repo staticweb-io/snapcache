@@ -10,7 +10,7 @@ wp plugin deactivate --all
 rm -f wp-content/object-cache.php
 """
 GET_HOME_PARALLEL = """
-hey -h2 -n 500 http://localhost:8889
+hey -h2 -n 500 "$SERVER_URL"
 """
 LITESPEED_CACHE_SETUP = """
 LITESPEED_CACHE="$(nix build ./dev#litespeed-cache --print-out-paths)"
@@ -54,6 +54,7 @@ wp plugin activate redis-cache
 wp redis enable
 wp cache flush
 """
+SERVER_URL = "http://localhost:8889"
 SNAPCACHE_SETUP = """
 SNAPCACHE="$(nix build .#pluginWpOrgSrc --print-out-paths)"
 eval "$COMMON_SETUP"
