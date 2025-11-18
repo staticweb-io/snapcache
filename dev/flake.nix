@@ -32,6 +32,10 @@
         maxMemory = 100;
         port = 11212;
       };
+      redisConfig = {
+        maxMemory = memcachedConfig.maxMemory;
+        port = 6379;
+      };
     in
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
@@ -91,6 +95,7 @@
                       apcu
                       imagick
                       memcached
+                      redis
                     ]
                     ++ (if enableXDebug then [ xdebug ] else [ ])
                   );
@@ -281,6 +286,13 @@
                 };
                 package = php;
                 phpOptions = phpOptions;
+              };
+              services.redis."redis1" = {
+                enable = true;
+                port = redisConfig.port;
+                extraConfig = ''
+                  maxmemory ${toString redisConfig.maxMemory}mb
+                '';
               };
               settings.processes."nginx1".depends_on."phpfpm1".condition = "process_healthy";
               settings.processes.test =
