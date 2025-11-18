@@ -9,7 +9,7 @@ wp plugin deactivate --all
 rm -f wp-content/object-cache.php
 """
 GET_HOME_PARALLEL = """
-hey -n 500 http://localhost:8889
+hey -h2 -n 500 http://localhost:8889
 """
 LITESPEED_CACHE_SETUP = """
 LITESPEED_CACHE="$(nix build ./dev#litespeed-cache --print-out-paths)"
