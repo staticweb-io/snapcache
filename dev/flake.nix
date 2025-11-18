@@ -3,15 +3,10 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     finefile = {
       url = "github:john-shaffer/finefile";
-      inputs.hyperfine-flake.follows = "hyperfine-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
-    hyperfine-flake = {
-      inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:john-shaffer/hyperfine-flake";
-    };
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
     services-flake.url = "github:juspay/services-flake";
     wordpress-flake = {
@@ -344,8 +339,6 @@
               hey
               inputs.finefile.packages.${system}.default
               inferno
-              inputs.hyperfine-flake.packages.${system}.default
-              inputs.hyperfine-flake.packages.${system}.scripts
               jq
               just
               nixfmt-rfc-style
