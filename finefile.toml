@@ -83,6 +83,14 @@ wp snapcache memcached install
 wp cache flush
 """
 WPDIR = "dev/data/wordpress1"
+WP_REDIS_SETUP = """
+WP_REDIS="$(nix build ./dev#wp-redis --print-out-paths)"
+eval "$COMMON_SETUP"
+wp plugin install --force "$WP_REDIS"
+wp plugin activate wp-redis
+wp redis enable
+wp cache flush
+"""
 
 [commands.litespeed-memcached]
 setup = """eval "$LITESPEED_CACHE_MEMCACHED_SETUP" """
@@ -102,6 +110,10 @@ tags = ["redis"]
 [commands.snapcache-memcached]
 setup = """eval "$SNAPCACHE_SETUP" """
 tags = ["memcached", "snapcache"]
+
+[commands.wp-redis]
+setup = """eval "$WP_REDIS_SETUP" """
+tags = ["redis"]
 
 [plots.whisker]
 file = "plot-whisker.png"

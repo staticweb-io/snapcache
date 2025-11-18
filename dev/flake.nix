@@ -366,6 +366,10 @@
               url = "https://downloads.wordpress.org/plugin/redis-cache.2.7.0.zip";
               hash = "sha256-DLxB3qNRaIaTuOfbEWW12StsjvcjGsD/Wr7HuD1ixjU=";
             };
+            wp-redis = fetchurl {
+              url = "https://downloads.wordpress.org/plugin/wp-redis.1.4.6.zip";
+              hash = "sha256-Cuw8ofc215EUMnVRVBxfwWxIg22cx8zKuJDgiKkZvLc=";
+            };
           };
         };
     };
