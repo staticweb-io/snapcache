@@ -11,18 +11,18 @@ rm -f wp-content/object-cache.php
 """
 CRAWL_PARALLEL = """
 URLS=(
-    /
-    /author/user/
-    /author/user/page/1/
-    /category/uncategorized/
-    /category/uncategorized/page/1/
-    /hello-world/
-    /not-found/
-    /sample-page/
-    /wp-sitemap.xml
+    "$SERVER_URL"/
+    "$SERVER_URL"/author/user/
+    "$SERVER_URL"/author/user/page/1/
+    "$SERVER_URL"/category/uncategorized/
+    "$SERVER_URL"/category/uncategorized/page/1/
+    "$SERVER_URL"/hello-world/
+    "$SERVER_URL"/not-found/
+    "$SERVER_URL"/sample-page/
+    "$SERVER_URL"/wp-sitemap.xml
 )
 
-parallel -j 0 'hey -h2 -n 50 -c 4 {1}' ::: ""$SERVER_URL"${URLS[@]}"
+parallel -j 0 'hey -h2 -n 50 -c 4 {1}' ::: "${URLS[@]}"
 """
 GET_HOME_PARALLEL = """
 hey -h2 -n 500 "$SERVER_URL"
