@@ -26,6 +26,13 @@ wp option set litespeed.conf.object-persistent 1
 wp option set litespeed.conf.object-port 11212
 wp option set litespeed.conf.object-transients 1
 """
+REDIS_CACHE_SETUP = """
+REDIS_CACHE="$(nix build ./dev#redis-cache --print-out-paths)"
+eval "$COMMON_SETUP"
+wp plugin install --force "$REDIS_CACHE"
+wp plugin activate redis-cache
+wp redis enable
+"""
 SNAPCACHE_SETUP = """
 SNAPCACHE="$(nix build .#pluginWpOrgSrc --print-out-paths)"
 eval "$COMMON_SETUP"
@@ -54,6 +61,18 @@ tags = ["cold", "memcached"]
 [commands.no-object-cache]
 setup = """eval "$COMMON_SETUP" """
 command = """ eval "$GET_HOME_PARALLEL" """
+
+[commands.redis-cache]
+setup = """eval "$REDIS_CACHE_SETUP" """
+command = """ eval "$GET_HOME_PARALLEL" """
+tags = ["redis"]
+
+[commands.redis-cache-cold]
+setup = """eval "$REDIS_CACHE_SETUP" """
+prepare = """wp --path="$WPDIR" cache flush"""
+warmup-runs = 1
+command = "curl http://localhost:8889"
+tags = ["cold", "redis"]
 
 [commands.snapcache-memcached]
 setup = """eval "$SNAPCACHE_SETUP" """

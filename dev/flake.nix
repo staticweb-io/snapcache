@@ -363,6 +363,10 @@
               url = "https://downloads.wordpress.org/plugin/litespeed-cache.7.6.2.zip";
               hash = "sha256-BVkpCYn+4+8z5QLnmeFsVS5zHWo/aG4eWmTC5mdxgnk=";
             };
+            redis-cache = fetchurl {
+              url = "https://downloads.wordpress.org/plugin/redis-cache.2.7.0.zip";
+              hash = "sha256-DLxB3qNRaIaTuOfbEWW12StsjvcjGsD/Wr7HuD1ixjU=";
+            };
           };
         };
     };
