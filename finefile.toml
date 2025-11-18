@@ -28,6 +28,7 @@ wp option set litespeed.conf.object-life 360
 wp option set litespeed.conf.object-persistent 1
 wp option set litespeed.conf.object-port 11212
 wp option set litespeed.conf.object-transients 1
+wp cache flush
 """
 LITESPEED_CACHE_REDIS_SETUP = """
 eval "$LITESPEED_CACHE_SETUP"
@@ -41,6 +42,7 @@ wp option set litespeed.conf.object-life 360
 wp option set litespeed.conf.object-persistent 1
 wp option set litespeed.conf.object-port 6379
 wp option set litespeed.conf.object-transients 1
+wp cache flush
 """
 REDIS_CACHE_SETUP = """
 REDIS_CACHE="$(nix build ./dev#redis-cache --print-out-paths)"
@@ -48,6 +50,7 @@ eval "$COMMON_SETUP"
 wp plugin install --force "$REDIS_CACHE"
 wp plugin activate redis-cache
 wp redis enable
+wp cache flush
 """
 SNAPCACHE_SETUP = """
 SNAPCACHE="$(nix build .#pluginWpOrgSrc --print-out-paths)"
@@ -59,6 +62,7 @@ rsync -avz --delete --chmod=F664,D775 --owner "$SNAPCACHE"/ "$SNAPCACHE_DIR"/
 chattr -a -R "$SNAPCACHE_DIR"
 wp plugin activate snapcache
 wp snapcache memcached install
+wp cache flush
 """
 WPDIR = "dev/data/wordpress1"
 
