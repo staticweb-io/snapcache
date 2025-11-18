@@ -291,7 +291,13 @@
                 enable = true;
                 port = redisConfig.port;
                 extraConfig = ''
+                  appendfsync no
+                  appendonly no
                   maxmemory ${toString redisConfig.maxMemory}mb
+                  maxmemory-policy allkeys-lru
+                  no-appendfsync-on-rewrite yes
+                  notify-keyspace-events ""
+                  save ""
                 '';
               };
               settings.processes."nginx1".depends_on."phpfpm1".condition = "process_healthy";
