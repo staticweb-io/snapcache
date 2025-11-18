@@ -10,11 +10,14 @@ rm -f wp-content/object-cache.php
 GET_HOME_PARALLEL = """
 hey -n 500 http://localhost:8889
 """
-LITESPEED_SETUP = """
-LITESPEEDCACHE="$(nix build ./dev#litespeed-cache --print-out-paths)"
+LITESPEED_CACHE_SETUP = """
+LITESPEED_CACHE="$(nix build ./dev#litespeed-cache --print-out-paths)"
 eval "$COMMON_SETUP"
-wp plugin install --force "$LITESPEEDCACHE"
+wp plugin install --force "$LITESPEED_CACHE"
 wp plugin activate litespeed-cache
+"""
+LITESPEED_CACHE_MEMCACHED_SETUP = """
+eval "$LITESPEED_CACHE_SETUP"
 cp wp-content/plugins/litespeed-cache/lib/object-cache.php wp-content/
 wp option set litespeed.conf.cache ''
 wp option set litespeed.conf.object 1
@@ -47,8 +50,8 @@ wp snapcache memcached install
 WPDIR = "dev/data/wordpress1"
 
 [commands.litespeed-memcached]
-setup = """eval "$LITESPEED_SETUP" """
-command = """ eval "$GET_HOME_PARALLEL" """
+setup = """eval "$LITESPEED_CACHE_MEMCACHED_SETUP" """
+command = """eval "$GET_HOME_PARALLEL" """
 tags = ["memcached"]
 
 [commands.litespeed-memcached-cold]
