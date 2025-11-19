@@ -195,7 +195,7 @@
                 memcached_servers = WPConfigFormat.lib.mkInline ''
                   global $memcached_servers;
                   $memcached_servers = [
-                      'default' => [ '127.0.0.1', '${toString memcachedConfig.port}' ],
+                      'default' => [ '127.0.0.1', ${toString memcachedConfig.port} ],
                   ];
                 '';
               };
