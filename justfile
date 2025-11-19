@@ -39,6 +39,7 @@ dev CLEAN="false" DEBUG="false":
 # Format source and then check for unfixable issues
 format: && _format-php
     just --fmt --unstable
+    fd -e json -x jsonfmt -w
     fd -e nix -x nixfmt
     fd "finefile\.toml" -x finefile format
 

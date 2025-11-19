@@ -340,6 +340,7 @@
               inputs.finefile.packages.${system}.default
               inferno
               jq
+              jsonfmt
               just
               nixfmt-rfc-style
               omnix
