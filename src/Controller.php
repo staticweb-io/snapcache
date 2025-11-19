@@ -138,30 +138,27 @@ class Controller {
     public static function installObjectCache(
         bool $force = false,
     ): void {
-        $obj_cache = get_dropins()['object-cache.php'] ?? null;
-
         if ( $force ) {
             FilesHelper::copyFile(
                 SNAPCACHE_PATH . 'src/drop-in/object-cache.php',
                 WP_CONTENT_DIR . '/object-cache.php',
             );
-        } elseif ( $obj_cache === null ) {
+            return;
+        }
+
+        $obj_cache = get_dropins()['object-cache.php'] ?? null;
+
+        if ( $obj_cache === null ) {
             global $memcached_servers;
             if ( $memcached_servers !== null && ! empty( $memcached_servers ) ) {
                 $mc = Memcached::getMemcached();
                 if ( $mc instanceof \Memcached && $mc->getVersion() !== false ) {
-                    FilesHelper::copyFile(
-                        SNAPCACHE_PATH . 'src/drop-in/object-cache.php',
-                        WP_CONTENT_DIR . '/object-cache.php',
-                    );
+                    self::installObjectCache( true );
                 }
             }
         } elseif ( $obj_cache['TextDomain'] === 'snapcache'
                 && $obj_cache['Version'] !== SNAPCACHE_VERSION ) {
-            FilesHelper::copyFile(
-                SNAPCACHE_PATH . 'src/drop-in/object-cache.php',
-                WP_CONTENT_DIR . '/object-cache.php',
-            );
+            self::installObjectCache( true );
         }
     }
 }
