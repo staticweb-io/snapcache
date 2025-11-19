@@ -9,7 +9,7 @@ class Controller {
             'SnapCache',
             'manage_options',
             'snapcache',
-            self::render( ... ),
+            SettingsMain::render( ... ),
             'dashicons-superhero'
         );
     }
@@ -19,12 +19,12 @@ class Controller {
      */
     public static function addUIElements(): void {
         add_action(
+            'admin_init',
+            SettingsMain::register( ... ),
+        );
+        add_action(
             'admin_menu',
             self::addMenuPage( ... )
         );
-    }
-
-    public static function render(): void {
-        echo 'hi';
     }
 }
