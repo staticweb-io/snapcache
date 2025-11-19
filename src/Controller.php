@@ -117,6 +117,9 @@ class Controller {
             FilesHelper::deleteFile(
                 WP_CONTENT_DIR . '/object-cache.php',
             );
+            if ( Options::getObjectCacheType() !== 'disabled' ) {
+                update_option( 'snapcache_object_cache', 'disabled', false );
+            }
         }
 
         if ( $network_wide ) {
@@ -143,6 +146,9 @@ class Controller {
                 SNAPCACHE_PATH . 'src/drop-in/object-cache.php',
                 WP_CONTENT_DIR . '/object-cache.php',
             );
+            if ( Options::getObjectCacheType() !== 'memcached' ) {
+                update_option( 'snapcache_object_cache', 'memcached', false );
+            }
             return;
         }
 

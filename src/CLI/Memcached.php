@@ -4,6 +4,7 @@ namespace SnapCache\CLI;
 
 use SnapCache\Controller;
 use SnapCache\FilesHelper;
+use SnapCache\Options;
 use WP_CLI;
 
 /**
@@ -207,6 +208,9 @@ class Memcached {
             FilesHelper::deleteFile(
                 WP_CONTENT_DIR . '/object-cache.php',
             );
+            if ( Options::getObjectCacheType() !== 'disabled' ) {
+                update_option( 'snapcache_object_cache', 'disabled', false );
+            }
             Controller::clearAllOptionsCache();
             WP_CLI::log( 'Removed object cache.' );
         } elseif ( $obj_cache === null ) {
