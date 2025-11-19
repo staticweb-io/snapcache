@@ -325,7 +325,7 @@ if ( ! class_exists( 'Memcached' )
             string $group = '',
             int $expire = 0,
         ): array {
-            if ( $data === [] ) {
+            if ( ! $this->can_add() || $data === [] ) {
                 return [];
             }
 
@@ -854,7 +854,7 @@ if ( ! class_exists( 'Memcached' )
             string $group = '',
             int $expire = 0,
         ): array {
-            if ( $data === [] ) {
+            if ( ! $this->can_add() || $data === [] ) {
                 return [];
             }
 
