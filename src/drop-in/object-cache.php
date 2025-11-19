@@ -170,8 +170,12 @@ if ( ! class_exists( 'Memcached' )
                     'snapcache_memcached_servers'
                 )
             );
-            $lines = $result ? maybe_unserialize( $result ) : '';
-            return array_map( self::parseServerToArray( ... ), explode( "\n", $lines ) );
+            $raw = $result ? maybe_unserialize( $result ) : '';
+            // Since the admin may type servers in a textarea, we want
+            // to ignore blank lines and extra whitespace.
+            $lines = array_map( trim( ... ), explode( "\n", $raw ) );
+            $non_blank_lines = array_filter( $lines, fn( $line ): bool => $line !== '' );
+            return array_map( self::parseServerToArray( ... ), $non_blank_lines );
         }
 
         /**
