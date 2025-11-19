@@ -110,7 +110,14 @@ if ( ! class_exists( 'Memcached' )
          */
         public static function parseServerToArray( mixed $data ): array {
             if ( is_array( $data ) ) {
-                return $data;
+                // Ensure array has at least server, port defaults to 11211, weight defaults to 0
+                $server = $data[0] ?? null;
+                if ( $server === null ) {
+                    throw new Exception( 'Invalid server data: missing server' );
+                }
+                $port = isset( $data[1] ) && $data[1] !== '' ? (int) $data[1] : 11211;
+                $weight = isset( $data[2] ) && $data[2] !== '' ? (int) $data[2] : 0;
+                return [ $server, $port, $weight ];
             }
             if ( is_string( $data ) ) {
                 // We intentionally leave values after extra spaces
