@@ -43,6 +43,10 @@ class Controller {
             0,
         );
 
+        if ( is_admin() ) {
+            Admin\Controller::addUIElements();
+        }
+
         return self::getInstance();
     }
 
