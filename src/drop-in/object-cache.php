@@ -82,7 +82,22 @@ if ( ! class_exists( 'Memcached' )
             // requests, we must take care not to add servers
             // that are already in the list.
             if ( empty( $mc->getServerList() ) ) {
-                $mc->addServers( $get_servers() );
+                try {
+                    $servers = $get_servers();
+                } catch ( Exception $e ) {
+                    error_log( 'Invalid memcached server format: ' . $e->getMessage() );
+                    // If we can't set servers, we just return with no
+                    // server list. This class will still work as an
+                    // in-memory object cache. The admin UI logic can
+                    // detect an invalid config and prompt the admin to
+                    // fix it.
+                }
+
+                if ( ! is_array( $servers ) ) {
+                    error_log( 'Invalid memcached server format' );
+                } elseif ( ! $mc->addServers( $servers ) ) {
+                    error_log( 'Memcached addServers failed' );
+                }
             }
 
             $this->mc = $mc;
@@ -134,14 +149,20 @@ if ( ! class_exists( 'Memcached' )
                             // uninterpreted and reserved for future use.
                             $parts = explode( ' ', $data );
                             $weight = isset( $parts[1] ) && $parts[1] !== '' ? (int) $parts[1] : 0;
+                            if ( ! isset( $parts[0] ) ) {
+                                throw new Exception( 'Invalid server data' );
+                            }
+                            $parts = explode( ':', $parts[0] );
+                            if ( ! isset( $parts[0] ) ) {
+                                throw new Exception( 'Invalid server data' );
+                            }
                             $server = $parts[0];
                             $port = isset( $parts[1] ) && $parts[1] !== '' ?
                                 (int) $parts[1] : 11211;
                             return [ $server, $port, $weight ];
                         }
                         throw new Exception(
-                            'Invalid server data. Expected array or string, found ' .
-                            esc_html( gettype( $data ) )
+                            'Invalid server data. Expected array or string. '
                         );
                     };
 
