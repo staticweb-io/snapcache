@@ -18,6 +18,12 @@ class Memcached {
     }
 
     public static function getMemcached(): \Memcached {
+        if ( ! class_exists( 'Memcached' ) ) {
+            WP_CLI::error(
+                'The Memcached PHP extension is not installed.',
+                1,
+            );
+        }
         return \SnapCache\Memcached::getMemcached(
             required: true,
         );
