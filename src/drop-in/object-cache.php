@@ -21,7 +21,11 @@
 
 declare(strict_types=1);
 
-if ( ! class_exists( 'Memcached' ) ) {
+global $memcached_servers;
+
+if ( ! class_exists( 'Memcached' )
+    || ! isset( $memcached_servers )
+    || empty( $memcached_servers ) ) {
     wp_using_ext_object_cache( false );
 } else {
     class SnapCacheMemcached {
@@ -120,11 +124,9 @@ if ( ! class_exists( 'Memcached' ) ) {
 
             global $memcached_servers;
 
-            $servers = $memcached_servers ?? [ [ '127.0.0.1', 11211 ] ];
-
             return new SnapCacheMemcached(
                 SNAPCACHE_MEMCACHED_PERSISTENT_ID,
-                $servers,
+                $memcached_servers,
                 (string) get_current_blog_id(),
                 WP_CACHE_KEY_SALT,
             );
