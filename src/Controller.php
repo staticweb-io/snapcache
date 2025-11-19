@@ -133,8 +133,9 @@ class Controller {
 
     /**
      * Install our object cache if one of these is true:
-     * - There is currently no object cache and $memcached_servers
-     *   is set and we can get a connection to memcached.
+     * - There is currently no object cache and
+     *   SNAPCACHE_MEMCACHED_SERVERS is set and we can get
+     *   a connection to memcached.
      * - There is an existing SnapCache object-cache.php
      *   and the version does not match our current version.
      */
@@ -155,8 +156,7 @@ class Controller {
         $obj_cache = get_dropins()['object-cache.php'] ?? null;
 
         if ( $obj_cache === null ) {
-            global $memcached_servers;
-            if ( $memcached_servers !== null && ! empty( $memcached_servers ) ) {
+            if ( defined( 'SNAPCACHE_MEMCACHED_SERVERS' ) ) {
                 $mc = Memcached::getMemcached();
                 if ( $mc instanceof \Memcached && $mc->getVersion() !== false ) {
                     self::installObjectCache( true );

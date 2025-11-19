@@ -144,13 +144,12 @@ if ( ! class_exists( 'Memcached' ) ) {
          * Throws an \Exception if servers cannot be processed.
          */
         public static function getServersFromConfig(): array {
-            global $memcached_servers;
-            if ( isset( $memcached_servers ) ) {
-                return array_map( self::parseServerToArray( ... ), $memcached_servers );
+            if ( defined( 'SNAPCACHE_MEMCACHED_SERVERS' ) ) {
+                return array_map( self::parseServerToArray( ... ), SNAPCACHE_MEMCACHED_SERVERS );
             }
 
-            // If $memcached_servers is not set in
-            // wp-config.php, try to look it up from the
+            // If SNAPCACHE_MEMCACHED_SERVERS is not set,
+            // try to look it up an option from the
             // DB. We can do this because any competent
             // host will keep persistent connections,
             // so we won't do this query for most requests.

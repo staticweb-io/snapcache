@@ -192,11 +192,8 @@
                 '';
 
                 # WordPress defines this differently than everything else
-                memcached_servers = WPConfigFormat.lib.mkInline ''
-                  global $memcached_servers;
-                  $memcached_servers = [
-                      'default' => [ '127.0.0.1', ${toString memcachedConfig.port} ],
-                  ];
+                SNAPCACHE_MEMCACHED_SERVERS = WPConfigFormat.lib.mkInline ''
+                  define( 'SNAPCACHE_MEMCACHED_SERVERS', [ [ '127.0.0.1', ${toString memcachedConfig.port} ] ] );
                 '';
               };
             };
