@@ -104,6 +104,70 @@ if ( ! class_exists( 'Memcached' )
         }
 
         /**
+         * Parses an array or string format server data into
+         * [ $server, $port, $weight ].
+         * Throws an \Exception if the data cannot be parsed.
+         */
+        public static function parseServerToArray( mixed $data ): array {
+            if ( is_array( $data ) ) {
+                return $data;
+            }
+            if ( is_string( $data ) ) {
+                // We intentionally leave values after extra spaces
+                // uninterpreted and reserved for future use.
+                $parts = explode( ' ', $data );
+                $weight = isset( $parts[1] ) && $parts[1] !== '' ? (int) $parts[1] : 0;
+                if ( ! isset( $parts[0] ) ) {
+                    throw new Exception( 'Invalid server data' );
+                }
+                $parts = explode( ':', $parts[0] );
+                if ( ! isset( $parts[0] ) ) {
+                    throw new Exception( 'Invalid server data' );
+                }
+                $server = $parts[0];
+                $port = isset( $parts[1] ) && $parts[1] !== '' ?
+                    (int) $parts[1] : 11211;
+                return [ $server, $port, $weight ];
+            }
+            throw new Exception(
+                'Invalid server data. Expected array or string. '
+            );
+        }
+
+        /**
+         * Returns configured servers.
+         * Attempts to process them into the format
+         * [ [ $server, $port, $weight ] ]
+         * Throws an \Exception if servers cannot be processed.
+         */
+        public static function getServersFromConfig(): array {
+            global $memcached_servers;
+            if ( isset( $memcached_servers ) ) {
+                return array_map( self::parseServerToArray( ... ), $memcached_servers );
+            }
+
+            // If $memcached_servers is not set in
+            // wp-config.php, try to look it up from the
+            // DB. We can do this because any competent
+            // host will keep persistent connections,
+            // so we won't do this query for most requests.
+            // WP-CLI doesn't keep connections, but that's ok
+            // because this is a very cheap query to do.
+            global $wpdb;
+            // We can't use get_option because it tries
+            // to call us. We have to do a direct query.
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+            $result = $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
+                    'snapcache_memcached_servers'
+                )
+            );
+            $lines = $result ? maybe_unserialize( $result ) : '';
+            return array_map( self::parseServerToArray( ... ), explode( "\n", $lines ) );
+        }
+
+        /**
          * Sets global state if needed and returns
          * a new instance of self.
          */
@@ -139,58 +203,7 @@ if ( ! class_exists( 'Memcached' )
 
             return new SnapCacheMemcached(
                 SNAPCACHE_MEMCACHED_PERSISTENT_ID,
-                function (): array {
-                    $server_to_array = function ( mixed $data ): array {
-                        if ( is_array( $data ) ) {
-                            return $data;
-                        }
-                        if ( is_string( $data ) ) {
-                            // We intentionally leave values after extra spaces
-                            // uninterpreted and reserved for future use.
-                            $parts = explode( ' ', $data );
-                            $weight = isset( $parts[1] ) && $parts[1] !== '' ? (int) $parts[1] : 0;
-                            if ( ! isset( $parts[0] ) ) {
-                                throw new Exception( 'Invalid server data' );
-                            }
-                            $parts = explode( ':', $parts[0] );
-                            if ( ! isset( $parts[0] ) ) {
-                                throw new Exception( 'Invalid server data' );
-                            }
-                            $server = $parts[0];
-                            $port = isset( $parts[1] ) && $parts[1] !== '' ?
-                                (int) $parts[1] : 11211;
-                            return [ $server, $port, $weight ];
-                        }
-                        throw new Exception(
-                            'Invalid server data. Expected array or string. '
-                        );
-                    };
-
-                    global $memcached_servers;
-                    if ( isset( $memcached_servers ) ) {
-                        return array_map( $server_to_array( ... ), $memcached_servers );
-                    }
-
-                    // If $memcached_servers is not set in
-                    // wp-config.php, try to look it up from the
-                    // DB. We can do this because any competent
-                    // host will keep persistent connections,
-                    // so we won't do this query for most requests.
-                    // WP-CLI doesn't keep connections, but that's ok
-                    // because this is a very cheap query to do.
-                    global $wpdb;
-                    // We can't use get_option because it tries
-                    // to call us. We have to do a direct query.
-                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-                    $result = $wpdb->get_var(
-                        $wpdb->prepare(
-                            "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
-                            'snapcache_memcached_servers'
-                        )
-                    );
-                    $lines = $result ? maybe_unserialize( $result ) : '';
-                    return array_map( $server_to_array( ... ), explode( "\n", $lines ) );
-                },
+                self::getServersFromConfig( ... ),
                 (string) get_current_blog_id(),
                 WP_CACHE_KEY_SALT,
             );
