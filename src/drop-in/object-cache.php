@@ -21,11 +21,7 @@
 
 declare(strict_types=1);
 
-global $memcached_servers;
-
-if ( ! class_exists( 'Memcached' )
-    || ! isset( $memcached_servers )
-    || empty( $memcached_servers ) ) {
+if ( ! class_exists( 'Memcached' ) ) {
     wp_using_ext_object_cache( false );
 } else {
     class SnapCacheMemcached {
