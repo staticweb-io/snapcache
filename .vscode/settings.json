@@ -1,4 +1,19 @@
 {
+  "intelephense.files.exclude": [
+    "**/.git/**",
+    "**/.svn/**",
+    "**/.hg/**",
+    "**/CVS/**",
+    "**/.DS_Store/**",
+    "**/dev/data/**",
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/result/**",
+    "**/result-*/**",
+    "**/vendor/**/{Tests,tests}/**",
+    "**/.history/**",
+    "**/vendor/**/vendor/**"
+  ],
   "intelephense.stubs": [
     "apache",
     "apcu",
