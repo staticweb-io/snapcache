@@ -2,6 +2,8 @@
 
 namespace SnapCache\Admin;
 
+use SnapCache\Options;
+
 class SettingsMain {
     /**
      * Register admin settings.
@@ -12,10 +14,7 @@ class SettingsMain {
             'snapcache_object_cache',
             [
                 'type' => 'string',
-                'sanitize_callback' => function ( $v ): string {
-                    $allowed = [ 'disabled', 'memcached' ];
-                    return in_array( $v, $allowed, true ) ? $v : 'disabled';
-                },
+                'sanitize_callback' => Options::conformObjectCacheType( ... ),
                 'default' => 'disabled',
             ]
         );
@@ -75,7 +74,7 @@ class SettingsMain {
     }
 
     public static function field_object_cache(): void {
-        $val = get_option( 'snapcache_object_cache', 'disabled' );
+        $val = Options::getObjectCacheType();
         ?>
     <p>
         <label>
