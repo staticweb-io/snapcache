@@ -46,7 +46,7 @@ if ( ! class_exists( 'Memcached' )
 
         public function __construct(
             string $persistent_id,
-            array $servers,
+            callable $get_servers,
             /**
              * Prefix used for cache keys in non-global groups
              */
@@ -82,7 +82,7 @@ if ( ! class_exists( 'Memcached' )
             // requests, we must take care not to add servers
             // that are already in the list.
             if ( empty( $mc->getServerList() ) ) {
-                $mc->addServers( $servers );
+                $mc->addServers( $get_servers() );
             }
 
             $this->mc = $mc;
@@ -122,11 +122,12 @@ if ( ! class_exists( 'Memcached' )
                 define( 'SNAPCACHE_MEMCACHED_USE_BINARY', false );
             }
 
-            global $memcached_servers;
-
             return new SnapCacheMemcached(
                 SNAPCACHE_MEMCACHED_PERSISTENT_ID,
-                $memcached_servers,
+                function (): array {
+                    global $memcached_servers;
+                    return $memcached_servers;
+                },
                 (string) get_current_blog_id(),
                 WP_CACHE_KEY_SALT,
             );
