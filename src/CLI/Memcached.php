@@ -24,9 +24,16 @@ class Memcached {
                 1,
             );
         }
-        return \SnapCache\Memcached::getMemcached(
-            required: true,
-        );
+
+        $mc = \SnapCache\Memcached::getMemcached();
+        if ( ! $mc instanceof \Memcached ) {
+            WP_CLI::error(
+                'Memcached is not enabled or is not managed by this plugin.',
+                1,
+            );
+        }
+
+        return $mc;
     }
 
     /**
