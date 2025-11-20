@@ -2,6 +2,7 @@
 
 namespace SnapCache\Admin;
 
+use SnapCache\Memcached;
 use SnapCache\Options;
 
 class SettingsMain {
@@ -94,14 +95,52 @@ class SettingsMain {
     }
 
     public static function field_memcached_servers(): void {
+        $configurable = ! Options::isMemcachedServersInWpConfig();
+
         $val = esc_textarea( get_option( 'snapcache_memcached_servers', 'localhost:11211' ) );
         ?>
         <textarea name="snapcache_memcached_servers" rows="5" cols="50" class="large-text"
+        <?php
+        if ( ! $configurable ) {
+            echo 'style="display: none"'; } ?>
         ><?php echo $val; ?></textarea>
         <p class="description">
-            One host per line. Format: <code>host:port</code>.
+        <?php if ( $configurable ) : ?>
+            One host per line. Format: <code>host:port</code> or <code>host:port weight</code>.
             Default is <code>localhost:11211</code>.
-        </p>
-        <?php
+            </p>
+            <?php
+        else :
+            $mc = Memcached::getSnapCacheMemcached();
+            $servers = $mc::getServersFromConfig();
+            ?>
+            <table class="widefat striped" style="width: auto; margin-top: 10px;">
+                <thead>
+                    <tr>
+                        <th scope="col" style="padding-left: 10pt; width: auto">Host</th>
+                        <th scope="col" style="text-align: center; padding-left: 20pt; width: auto">
+                            Port</th>
+                        <th scope="col" style="text-align: center; padding-left: 20pt; width: auto">
+                            Weight</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ( $servers as $server ) : ?>
+                    <tr>
+                        <td style="padding-left: 10pt"><?php echo esc_html( $server[0] ); ?></td>
+                        <td style="text-align: center; padding-left: 20pt">
+                            <?php echo esc_html( $server[1] ?? 11211 ); ?></td>
+                        <td style="text-align: center; padding-left: 20pt">
+                            <?php echo esc_html( $server[2] ?? 0 ); ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <p>
+            To change the server list, either edit <code>SNAPCACHE_MEMCACHED_SERVERS</code>
+            in <code>wp-config.php</code> or remove it and refresh this page.
+            </p>
+            <?php
+        endif;
     }
 }

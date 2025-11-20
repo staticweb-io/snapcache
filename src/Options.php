@@ -30,4 +30,12 @@ class Options {
 
         return $v;
     }
+
+    /**
+     * Returns true if memcached servers are set by wp-config.php.
+     * If false, servers are set by the `snapcache_object_cache` option.
+     */
+    public static function isMemcachedServersInWpConfig(): bool {
+        return defined( 'SNAPCACHE_MEMCACHED_SERVERS' );
+    }
 }
