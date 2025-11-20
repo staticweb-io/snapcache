@@ -3,7 +3,7 @@
 namespace SnapCache;
 
 class Options {
-    final public static $object_cache_types = [ 'disabled', 'memcached' ];
+    public static $object_cache_types = [ 'disabled', 'memcached' ];
 
     /**
      * Attempt to coerce a string into a recognized object cache type.
