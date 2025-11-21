@@ -26,11 +26,6 @@ if ( ! defined( 'WP_CLI' ) && ! is_admin() ) {
 define( 'SNAPCACHE_VERSION', '0.1.0' );
 define( 'SNAPCACHE_PATH', plugin_dir_path( __FILE__ ) );
 
-if ( ! defined( 'SNAPCACHE_DEBUG' ) ) {
-    $enabled = WP_DEBUG || ( defined( 'WP_CLI' ) && WP_CLI::get_config( 'debug' ) );
-    define( 'SNAPCACHE_DEBUG', $enabled );
-}
-
 if ( file_exists( SNAPCACHE_PATH . 'vendor/autoload.php' ) ) {
     require_once SNAPCACHE_PATH . 'vendor/autoload.php';
 }
