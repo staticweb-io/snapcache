@@ -73,11 +73,11 @@ if ( ! class_exists( 'Memcached' ) ) {
                     error_log( 'Failed to enable binary protocol for Memcached' );
                 }
             }
-
+            $admin = is_admin();
             // Since the Memcached instance persists across
             // requests, we must take care not to add servers
             // that are already in the list.
-            if ( empty( $mc->getServerList() ) ) {
+            if ( $admin || empty( $mc->getServerList() ) ) {
                 try {
                     $servers = $get_servers();
                 } catch ( Exception $e ) {
