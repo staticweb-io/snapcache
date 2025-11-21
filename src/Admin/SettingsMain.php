@@ -114,10 +114,14 @@ class SettingsMain {
             <?php
                 $mc = Memcached::getMemcached();
             if ( $mc instanceof \Memcached && $mc->getVersion() !== false ) {
-                if ( $val === 'memcached' ) {
+                if ( $val !== 'memcached' ) {
+                    echo '(Available)';
+                } elseif ( $obj_cache_is_ours ) {
                     echo '<span style="color: green">(Active)</span>';
                 } else {
-                    echo '(Available)';
+                    echo '<span style="color: red">(Available but not installed.' .
+                    '. Try disabling and re-enabling,' .
+                    ' or run <code>wp snapcache memcached install</code>.)</span>';
                 }
             } elseif ( $val === 'memcached' ) {
                 echo '<span style="color: red">(Connection failed)</span>';
