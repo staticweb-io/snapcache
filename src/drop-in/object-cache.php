@@ -74,10 +74,11 @@ if ( ! class_exists( 'Memcached' ) ) {
                 }
             }
             $admin = is_admin();
+            $server_list = $mc->getServerList();
             // Since the Memcached instance persists across
             // requests, we must take care not to add servers
             // that are already in the list.
-            if ( $admin || empty( $mc->getServerList() ) ) {
+            if ( $admin || empty( $server_list ) ) {
                 try {
                     $servers = $get_servers();
                 } catch ( Exception $e ) {
@@ -91,8 +92,30 @@ if ( ! class_exists( 'Memcached' ) ) {
 
                 if ( ! is_array( $servers ) ) {
                     error_log( 'Invalid memcached server format' );
-                } elseif ( ! $mc->addServers( $servers ) ) {
-                    error_log( 'Memcached addServers failed' );
+                } elseif ( count( $servers ) !== count( $server_list ) ) {
+                    if ( ! $mc->addServers( $servers ) ) {
+                        error_log( 'Memcached addServers failed' );
+                    }
+                } else {
+                    $comparator = function ( array $a, array $b ): int {
+                        if ( array_is_list( $a ) ) {
+                            return $a[0] === $b['host'] && $a[1] === $b['port'] ? 0 : -1;
+                        }
+                        return $b[0] === $a['host'] && $b[1] === $a['port'] ? 0 : 1;
+                    };
+                    if ( ( array_udiff( $servers, $server_list, $comparator ) !== []
+                        || array_udiff( $server_list, $servers, $comparator ) !== [] )
+                        ) {
+                        if ( $mc->resetServerList() && $mc->addServers( $servers ) ) {
+                            // If servers were changed, then some data is probably
+                            // out of sync.
+                            if ( ! empty( $server_list ) ) {
+                                $mc->flush();
+                            }
+                        } else {
+                            error_log( 'Memcached addServers failed' );
+                        }
+                    }
                 }
             }
 
