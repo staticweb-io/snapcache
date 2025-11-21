@@ -85,10 +85,6 @@ class FilesHelper {
 
             if ( ! $dir_files ) {
                 $msg = 'Trying to delete nonexistent dir: ' . $dir;
-                if ( defined( 'SNAPCACHE_ESCAPE_EXCEPTIONS' )
-                && SNAPCACHE_ESCAPE_EXCEPTIONS ) {
-                    throw new SnapCacheException( esc_html( $msg ) );
-                }
                 throw new SnapCacheException( $msg );
             }
 
@@ -120,10 +116,7 @@ class FilesHelper {
 
         if ( ! $result ) {
             $msg = 'Failed to delete file: ' . $filename;
-            if ( defined( 'SNAPCACHE_ESCAPE_EXCEPTIONS' ) && SNAPCACHE_ESCAPE_EXCEPTIONS ) {
-                throw new SnapCacheException( esc_html( $msg ) );
-            }
-            throw new SnapCacheException( $msg );
+            throw new SnapCacheException( esc_html( $msg ) );
         }
     }
 
