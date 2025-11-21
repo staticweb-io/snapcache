@@ -97,6 +97,8 @@ class SettingsMain {
                 echo '(Object cache was installed by another plugin: ' .
                 esc_html( $obj_cache['Name'] ?? 'Unknown' ) .
                 ' ' . esc_html( $obj_cache['Version'] ?? '(unknown version)' ) . ')';
+            } elseif ( $val === 'disabled' ) {
+                echo '<span style="color: red">(Object cache installed)</span>';
             }
             ?>
         </label>
