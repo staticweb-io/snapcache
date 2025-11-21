@@ -43,6 +43,21 @@ class Controller {
             0,
         );
 
+        add_action(
+            'add_option_snapcache_object_cache',
+            self::onObjectCacheSet( ... ),
+            10,
+            3,
+        );
+
+        add_action(
+            'update_option_snapcache_object_cache',
+            fn( $old_value, $new_value, string $option )
+            => self::onObjectCacheSet( $option, $new_value ),
+            10,
+            3,
+        );
+
         if ( is_admin() ) {
             Admin\Controller::addUIElements();
         }
@@ -134,8 +149,8 @@ class Controller {
     /**
      * Install our object cache if one of these is true:
      * - There is currently no object cache and
-     *   SNAPCACHE_MEMCACHED_SERVERS is set and we can get
-     *   a connection to memcached.
+     *   the `snapcache_object_cache` option === "memcached"
+     *   and we can get a connection to memcached.
      * - There is an existing SnapCache object-cache.php
      *   and the version does not match our current version.
      */
@@ -156,7 +171,7 @@ class Controller {
         $obj_cache = get_dropins()['object-cache.php'] ?? null;
 
         if ( $obj_cache === null ) {
-            if ( defined( 'SNAPCACHE_MEMCACHED_SERVERS' ) ) {
+            if ( Options::getObjectCacheType() === 'memcached' ) {
                 $mc = Memcached::getMemcached();
                 if ( $mc instanceof \Memcached && $mc->getVersion() !== false ) {
                     self::installObjectCache( true );
@@ -165,6 +180,19 @@ class Controller {
         } elseif ( $obj_cache['TextDomain'] === 'snapcache'
                 && $obj_cache['Version'] !== SNAPCACHE_VERSION ) {
             self::installObjectCache( true );
+        }
+    }
+
+    /**
+     * Try to update object-cache.php when the
+     * snapcache_object_cache option is changed.
+     */
+    // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
+    public static function onObjectCacheSet( string $option, mixed $new_value ): void {
+        if ( $new_value === 'disabled' ) {
+            self::deactivate();
+        } elseif ( $new_value === 'memcached' ) {
+            self::installObjectCache();
         }
     }
 }
