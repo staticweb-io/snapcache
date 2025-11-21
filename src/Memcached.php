@@ -58,45 +58,6 @@ class Memcached {
     }
 
     /**
-     * Returns a server at random, respecting weight.
-     *
-     * Returns an array of the form:
-     * [
-     *     'host' => '127.0.0.1',
-     *     'port' => 11211,
-     *     'weight' => 20,
-     * ]
-     */
-    public static function getRandomServer(
-        \Memcached $mc,
-    ): ?array {
-        $servers = $mc->getServerList();
-        $total_weight = 0;
-
-        foreach ( $servers as $s ) {
-            $total_weight += $s['weight'] ?? 1;
-        }
-
-        if ( defined( 'SNAPCACHE_WP_ORG_MODE' ) && SNAPCACHE_WP_ORG_MODE ) {
-            $rand = wp_rand( 1, $total_weight );
-        } else {
-            $rand = mt_rand( 1, $total_weight );
-        }
-
-        $current = 0;
-
-        foreach ( $servers as $server ) {
-            $weight = $server['weight'] ?? 1;
-            $current += $weight;
-            if ( $rand <= $current ) {
-                return $server;
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Returns a socket to a server in the memcached pool
      *
      * @param int &$error_code Error code passed to fsockopen
@@ -107,7 +68,7 @@ class Memcached {
         ?int &$error_code = null,
         ?string &$error_message = null,
     ) {
-        $server = self::getRandomServer( $mc );
+        $server = $mc->getServerList()[0] ?? null;
         if ( $server === null ) {
             return null;
         }
