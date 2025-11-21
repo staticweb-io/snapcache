@@ -120,7 +120,7 @@ class SettingsMain {
                     echo '<span style="color: green">(Active)</span>';
                 } else {
                     echo '<span style="color: red">(Available but not installed.' .
-                    '. Try disabling and re-enabling,' .
+                    ' Try disabling and re-enabling,' .
                     ' or run <code>wp snapcache memcached install</code>.)</span>';
                 }
             } elseif ( $val === 'memcached' ) {
