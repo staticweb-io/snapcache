@@ -78,7 +78,7 @@ class SettingsMain {
     }
 
     public static function field_object_cache(): void {
-        $val = Options::getObjectCacheType();
+        $val = Options::getObjectCacheType( true );
         ?>
     <p>
         <label>

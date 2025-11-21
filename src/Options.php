@@ -20,7 +20,20 @@ class Options {
         return in_array( $s, self::$object_cache_types, true ) ? $s : 'disabled';
     }
 
-    public static function getObjectCacheType(): string {
+    /**
+     * Look up the object cache type setting in options.
+     * When object cache-related options are changed, we tend
+     * to get stale values. So we remove the cached values by
+     * default to make sure we get the latest values.
+     */
+    public static function getObjectCacheType(
+        bool $use_cache = false,
+    ): string {
+        if ( ! $use_cache ) {
+            wp_cache_delete( 'snapcache_object_cache', 'options' );
+            wp_cache_delete( 'alloptions', 'options' );
+        }
+
         $u = get_option( 'snapcache_object_cache', 'disabled' );
         $v = self::conformObjectCacheType( $u );
 
