@@ -89,6 +89,20 @@ class SettingsMain {
             <input type="radio" name="snapcache_object_cache" value="memcached"
             <?php checked( $val, 'memcached' ); ?> />
             Memcached
+            <?php
+                $mc = Memcached::getMemcached();
+            if ( $mc instanceof \Memcached && $mc->getVersion() !== false ) {
+                if ( $val === 'memcached' ) {
+                    echo '<span style="font-weight: bold; color: green">(Active)</span>';
+                } else {
+                    echo '(Available)';
+                }
+            } elseif ( $val === 'memcached' ) {
+                echo '<span style="font-weight: bold; color: red">(Connection failed)</span>';
+            } else {
+                echo '(No server detected)';
+            }
+            ?>
         </label>
     </p>
         <?php
