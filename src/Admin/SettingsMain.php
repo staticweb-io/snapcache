@@ -137,13 +137,13 @@ class SettingsMain {
     public static function field_memcached_servers(): void {
         $configurable = ! Options::isMemcachedServersInWpConfig();
 
-        $val = esc_textarea( get_option( 'snapcache_memcached_servers', 'localhost:11211' ) );
+        $val = get_option( 'snapcache_memcached_servers', 'localhost:11211' );
         ?>
         <textarea name="snapcache_memcached_servers" rows="5" cols="50" class="large-text"
         <?php
         if ( ! $configurable ) {
             echo 'style="display: none"'; } ?>
-        ><?php echo $val; ?></textarea>
+        ><?php echo esc_textarea( $val ); ?></textarea>
         <p class="description">
         <?php if ( $configurable ) : ?>
             One host per line.
