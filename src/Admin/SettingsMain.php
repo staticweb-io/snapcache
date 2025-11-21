@@ -81,6 +81,7 @@ class SettingsMain {
         $val = Options::getObjectCacheType( true );
         $obj_cache = get_dropins()['object-cache.php'] ?? null;
         $obj_cache_is_ours = $obj_cache && ( ( $obj_cache['TextDomain'] ?? null ) === 'snapcache' );
+        $obj_cache_path = WP_CONTENT_DIR . '/object-cache.php';
         ?>
     <p>
         <label
@@ -118,6 +119,16 @@ class SettingsMain {
                     echo '(Available)';
                 } elseif ( $obj_cache_is_ours ) {
                     echo '<span style="color: green">(Active)</span>';
+                } elseif ( $obj_cache ) {
+                    echo '<span style="color: red">' .
+                    '(Object cache was installed by another plugin: ' .
+                    esc_html( $obj_cache['Name'] ?? 'Unknown' ) .
+                    ' ' . esc_html( $obj_cache['Version'] ?? '(unknown version)' ) . ')' .
+                    '</span>' .
+                    ' Disable it in the other plugin or by removing' .
+                    ' the <code>' .
+                    esc_html( $obj_cache_path ) .
+                    '</code> file.';
                 } else {
                     echo '<span style="color: red">(Available but not installed.' .
                     ' Try disabling and re-enabling,' .
