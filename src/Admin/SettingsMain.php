@@ -83,7 +83,10 @@ class SettingsMain {
         $obj_cache_is_ours = $obj_cache && ( ( $obj_cache['TextDomain'] ?? null ) === 'snapcache' );
         ?>
     <p>
-        <label>
+        <label
+        <?php
+        if ( $val === 'disabled' ) {
+            echo ' style="font-weight: bold"';} ?>>
             <input type="radio" name="snapcache_object_cache" value="disabled"
             <?php checked( $val, 'disabled' ); ?> />
             Disabled
@@ -99,7 +102,10 @@ class SettingsMain {
         </label>
     </p>
     <p>
-        <label>
+        <label
+        <?php
+        if ( $val === 'memcached' ) {
+            echo ' style="font-weight: bold"';} ?>>
             <input type="radio" name="snapcache_object_cache" value="memcached"
             <?php checked( $val, 'memcached' ); ?> />
             Memcached
@@ -107,12 +113,12 @@ class SettingsMain {
                 $mc = Memcached::getMemcached();
             if ( $mc instanceof \Memcached && $mc->getVersion() !== false ) {
                 if ( $val === 'memcached' ) {
-                    echo '<span style="font-weight: bold; color: green">(Active)</span>';
+                    echo '<span style="color: green">(Active)</span>';
                 } else {
                     echo '(Available)';
                 }
             } elseif ( $val === 'memcached' ) {
-                echo '<span style="font-weight: bold; color: red">(Connection failed)</span>';
+                echo '<span style="color: red">(Connection failed)</span>';
             } else {
                 echo '(No server detected)';
             }
