@@ -3,7 +3,7 @@
  * Plugin Name:       SnapCache
  * Plugin URI:        https://github.com/staticweb-io/snapcache
  * Description:       Memcached object cache
- * Version:           0.1.0
+ * Version:           0.2.0
  * Author:            StaticWeb.io
  * Author URI:        https://staticweb.io
  * Text Domain:       snapcache
@@ -23,7 +23,7 @@ if ( ! defined( 'WP_CLI' ) && ! is_admin() ) {
     return;
 }
 
-define( 'SNAPCACHE_VERSION', '0.1.0' );
+define( 'SNAPCACHE_VERSION', '0.2.0' );
 define( 'SNAPCACHE_PATH', plugin_dir_path( __FILE__ ) );
 
 if ( file_exists( SNAPCACHE_PATH . 'vendor/autoload.php' ) ) {
