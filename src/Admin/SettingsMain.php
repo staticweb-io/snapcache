@@ -106,7 +106,8 @@ class SettingsMain {
         ><?php echo $val; ?></textarea>
         <p class="description">
         <?php if ( $configurable ) : ?>
-            One host per line. Format: <code>host:port</code> or <code>host:port weight</code>.
+            One host per line.
+            Format: <code>host:port</code> or <code>host:port weight</code>.
             Default is <code>localhost:11211</code>.
             </p>
             <?php
@@ -117,10 +118,11 @@ class SettingsMain {
             <table class="widefat striped" style="width: auto; margin-top: 10px;">
                 <thead>
                     <tr>
-                        <th scope="col" style="padding-left: 10pt; width: auto">Host</th>
-                        <th scope="col" style="text-align: center; padding-left: 20pt; width: auto">
+                        <th scope="col" style="padding-left: 20px; width: auto">Host</th>
+                        <th scope="col" style="text-align: center; padding-left: 20px; width: auto">
                             Port</th>
-                        <th scope="col" style="text-align: center; padding-left: 20pt; width: auto">
+                        <th scope="col"
+                            style="text-align: center; padding: 20px; width: auto">
                             Weight</th>
                     </tr>
                 </thead>
