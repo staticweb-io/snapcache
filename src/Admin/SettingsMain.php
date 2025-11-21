@@ -59,6 +59,9 @@ class SettingsMain {
      * Render the admin page.
      */
     public static function render(): void {
+        wp_cache_delete( 'snapcache_memcached_servers', 'options' );
+        wp_cache_delete( 'snapcache_object_cache', 'options' );
+        wp_cache_delete( 'alloptions', 'options' );
         ?>
         <div class="wrap">
             <h1>SnapCache Settings</h1>
