@@ -79,12 +79,23 @@ class SettingsMain {
 
     public static function field_object_cache(): void {
         $val = Options::getObjectCacheType( true );
+        $obj_cache = get_dropins()['object-cache.php'] ?? null;
+        $obj_cache_is_ours = $obj_cache && ( ( $obj_cache['TextDomain'] ?? null ) === 'snapcache' );
         ?>
     <p>
         <label>
             <input type="radio" name="snapcache_object_cache" value="disabled"
             <?php checked( $val, 'disabled' ); ?> />
             Disabled
+            <?php
+            if ( ! $obj_cache ) {
+                echo '(No object cache detected)';
+            } elseif ( ! $obj_cache_is_ours ) {
+                echo '(Object cache was installed by another plugin: ' .
+                esc_html( $obj_cache['Name'] ?? 'Unknown' ) .
+                ' ' . esc_html( $obj_cache['Version'] ?? '(unknown version)' ) . ')';
+            }
+            ?>
         </label>
     </p>
     <p>
