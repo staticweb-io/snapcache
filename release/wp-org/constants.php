@@ -15,11 +15,3 @@
 // Require use of wp_* functions and WP_Filesystem
 // rather than direct file access.
 define( 'SNAPCACHE_DIRECT_FILE_ACCESS', false );
-
-// Force the use of functions that wordpress.org requires
-// but we would not use when we aren't forced to.
-// e.g. using wp_rand instead of mt_rand in a context
-// where a CSPRNG adds no value.
-// This is just to force useless behaviors, not
-// for anything that could be useful in some context.
-define( 'SNAPCACHE_WP_ORG_MODE', true );
