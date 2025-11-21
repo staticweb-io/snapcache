@@ -12,7 +12,8 @@
     "**/result-*/**",
     "**/vendor/**/{Tests,tests}/**",
     "**/.history/**",
-    "**/vendor/**/vendor/**"
+    "**/vendor/**/vendor/**",
+    "/nix/store/**"
   ],
   "intelephense.stubs": [
     "apache",
