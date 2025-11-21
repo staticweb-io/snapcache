@@ -144,10 +144,14 @@ class SettingsMain {
             Format: <code>host:port</code> or <code>host:port weight</code>.
             Default is <code>localhost:11211</code>.
             </p>
+            <p>
+                Saved values:
+        </p>
             <?php
-        else :
+        endif;
             $mc = Memcached::getSnapCacheMemcached();
             $servers = $mc::getServersFromConfig();
+        if ( $servers !== [] ) {
             ?>
             <table class="widefat striped" style="width: auto; margin-top: 10px;">
                 <thead>
@@ -161,22 +165,28 @@ class SettingsMain {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ( $servers as $server ) : ?>
-                    <tr>
-                        <td style="padding-left: 10pt"><?php echo esc_html( $server[0] ); ?></td>
-                        <td style="text-align: center; padding-left: 20pt">
-                            <?php echo esc_html( $server[1] ?? 11211 ); ?></td>
-                        <td style="text-align: center; padding-left: 20pt">
-                            <?php echo esc_html( $server[2] ?? 0 ); ?></td>
-                    </tr>
-                    <?php endforeach; ?>
+                <?php
+                foreach ( $servers as $server ) : ?>
+                            <tr>
+                                <td style="padding-left: 10pt">
+                                    <?php echo esc_html( $server[0] ); ?></td>
+                                <td style="text-align: center; padding-left: 20pt">
+                                    <?php echo esc_html( $server[1] ?? 11211 ); ?></td>
+                                <td style="text-align: center; padding-left: 20pt">
+                                    <?php echo esc_html( $server[2] ?? 0 ); ?></td>
+                            </tr>
+                            <?php
+                            endforeach;
+                ?>
                 </tbody>
             </table>
+            <?php
+        } if ( ! $configurable ) : ?>
             <p>
             To change the server list, either edit <code>SNAPCACHE_MEMCACHED_SERVERS</code>
             in <code>wp-config.php</code> or remove it and refresh this page.
             </p>
-            <?php
-        endif;
+                <?php
+            endif;
     }
 }
