@@ -42,7 +42,7 @@ you can build the plugin with your changes by running
 This will create a zip file at `result/snapcache.zip`.
 
 There is a slightly different build for the WordPress.org repo.
-This has a few differences like getting updates from WordPress.org instead of from GitHub.
+This has a few differences like performing direct file access.
 You can build it with `just build-wp-org`.
 
 If you make changes to composer.json, or composer.lock,
