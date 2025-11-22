@@ -29,11 +29,10 @@ object cache plugins. It will not break your site if the cache is unreachable, a
 
 Requests per second in a default WordPress installation. Comparison of object cache functionality only.
 
-* **SnapCache v0.2.0 with Memcached - 209.1 req/sec**
-* WP Redis v1.4.6 - 205.2 req/sec
-* Redis Cache v2.7.0 - 196.4 req/sec
-* LiteSpeed v7.6.2 with Redis - 168.2 req/sec
-* LiteSpeed v7.6.2 with Memcached - 163.8 req/sec
+* **SnapCache v0.2.0 with Memcached - 387.0 req/sec**
+* Redis Cache v2.7.0 - 367.1 req/sec
+* LiteSpeed v7.6.2 with Redis - 218.6 req/sec
+* LiteSpeed v7.6.2 with Memcached - 218.0 req/sec
 
 == Requirements ==
 
