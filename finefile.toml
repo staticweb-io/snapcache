@@ -10,19 +10,21 @@ wp plugin deactivate --all
 rm -f wp-content/object-cache.php
 """
 CRAWL_PARALLEL = """
-URLS=(
-    "$SERVER_URL"/
-    "$SERVER_URL"/author/user/
-    "$SERVER_URL"/author/user/page/1/
-    "$SERVER_URL"/category/uncategorized/
-    "$SERVER_URL"/category/uncategorized/page/1/
-    "$SERVER_URL"/hello-world/
-    "$SERVER_URL"/not-found/
-    "$SERVER_URL"/sample-page/
-    "$SERVER_URL"/wp-sitemap.xml
-)
+URLS="$(mktemp)"
+cat > "$URLS" <<EOF
+$SERVER_URL/
+$SERVER_URL/author/user/
+$SERVER_URL/author/user/page/1/
+$SERVER_URL/category/uncategorized/
+$SERVER_URL/category/uncategorized/page/1/
+$SERVER_URL/hello-world/
+$SERVER_URL/not-found/
+$SERVER_URL/sample-page/
+$SERVER_URL/wp-sitemap.xml
+EOF
 
-parallel -j 0 'hey -h2 -n 50 -c 4 {1}' ::: "${URLS[@]}"
+siege --benchmark --no-parser --internet -c 50 -r 10 -f "$URLS"
+rm "$URLS"
 """
 GET_HOME_PARALLEL = """
 hey -h2 -n 500 "$SERVER_URL"
@@ -69,7 +71,7 @@ wp plugin activate redis-cache
 wp redis enable
 wp cache flush
 """
-SERVER_URL = "http://localhost:8889"
+SERVER_URL = "http://127.0.0.1:8889"
 SNAPCACHE_SETUP = """
 SNAPCACHE="$(nix build .#pluginWpOrgSrc --print-out-paths)"
 eval "$COMMON_SETUP"

@@ -345,6 +345,7 @@
               php
               phpPackages.composer
               shellcheck
+              siege
               watchexec
               wp-cli
             ];
