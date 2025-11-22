@@ -233,6 +233,11 @@
             { config, ... }:
             {
               imports = [ inputs.services-flake.processComposeModules.default ];
+              cli = {
+                options = {
+                  no-server = false;
+                };
+              };
               services.memcached."memcached1" = {
                 enable = true;
                 port = memcachedConfig.port;
