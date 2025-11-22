@@ -47,6 +47,7 @@
         let
           getEnv = name: default: (if "" == builtins.getEnv name then default else builtins.getEnv name);
           enableXDebug = getEnv "ENABLE_XDEBUG" "false" == "true";
+          skipPlugins = getEnv "SKIP_PLUGINS" "false" == "true";
           phpExtensionsName = phpPackage + "Extensions";
           phpExtensions = pkgs.${phpExtensionsName};
           phpPackage = getEnv "PHP_PACKAGE" "php";
@@ -217,11 +218,18 @@
                 cd ${dataDir}
                 wp core install --url="https://example.com" --title=WordPress --admin_user=user --admin_email="user@example.com" --admin_password=pass
                 wp option update permalink_structure "/%postname%/"
-                rm -rf "./wp-content/plugins/plugin-check" "./wp-content/plugins/snapCache"
-                wp plugin install --force --activate ${snapCache}/snapcache.zip
-                wp snapcache memcached install
-                wp plugin install --force ${wpPluginCheck}
-              '';
+              ''
+              + (
+                if skipPlugins then
+                  ""
+                else
+                  ''
+                    rm -rf "./wp-content/plugins/plugin-check" "./wp-content/plugins/snapcache"
+                    wp plugin install --force --activate ${snapCache}/snapcache.zip
+                    wp snapcache memcached install
+                    wp plugin install --force ${wpPluginCheck}
+                  ''
+              );
             };
         in
         with finalPkgs;

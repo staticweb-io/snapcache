@@ -1,13 +1,18 @@
 [defaults.commands]
 command = """eval "$CRAWL_PARALLEL" """
+cleanup = """
+cd dev
+nix run . -- down || true
+"""
 warmup-runs = 2
 
 [defaults.commands.env]
 COMMON_SETUP = """
-cd "$WPDIR"
-wp cache flush
-wp plugin deactivate --all
-rm -f wp-content/object-cache.php
+cd dev
+nix run . -- down || true
+rm -rf data
+SKIP_PLUGINS=true nix run . --impure -- up --detach-on-success --detached-with-tui
+cd ../"$WPDIR"
 """
 CRAWL_PARALLEL = """
 URLS="$(mktemp)"
@@ -73,15 +78,11 @@ wp cache flush
 """
 SERVER_URL = "http://127.0.0.1:8889"
 SNAPCACHE_SETUP = """
-SNAPCACHE="$(nix build .#pluginWpOrgSrc --print-out-paths)"
+SNAPCACHE="$(nix build .#pluginWpOrg --print-out-paths)"
 eval "$COMMON_SETUP"
-SNAPCACHE_DIR=wp-content/plugins/snapcache
-mkdir -p "$SNAPCACHE_DIR"
-chmod u+w -R "$SNAPCACHE_DIR"
-rsync -avz --delete --chmod=F664,D775 --owner "$SNAPCACHE"/ "$SNAPCACHE_DIR"/
-chattr -a -R "$SNAPCACHE_DIR"
+wp plugin install --force "$SNAPCACHE"/snapcache.zip
 wp plugin activate snapcache
-wp snapcache memcached install
+wp snapcache memcached install --force
 wp cache flush
 """
 WPDIR = "dev/data/wordpress1"
