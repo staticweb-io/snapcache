@@ -65,9 +65,13 @@ if ( ! class_exists( 'Memcached' ) ) {
             // https://www.php.net/manual/en/memcached.construct.php
             $mc = new Memcached( $persistent_id );
 
-            if ( SNAPCACHE_MEMCACHED_USE_BINARY === true
-                && $mc->getOption( Memcached::OPT_BINARY_PROTOCOL ) === false ) {
-                $result = $mc->setOption( Memcached::OPT_BINARY_PROTOCOL, true );
+            // We can only enable binary protocol for new connections
+            if ( $mc->isPristine() ) {
+                $result = $mc->setOptions(
+                    [
+                        Memcached::OPT_BINARY_PROTOCOL => SNAPCACHE_MEMCACHED_USE_BINARY === true,
+                    ]
+                );
 
                 if ( $result === false ) {
                     error_log( 'Failed to enable binary protocol for Memcached' );
