@@ -66,10 +66,12 @@ if ( ! class_exists( 'Memcached' ) ) {
             $mc = new Memcached( $persistent_id );
 
             // We can only enable binary protocol for new connections
-            if ( $mc->isPristine() ) {
+            if ( $mc->isPristine() && SNAPCACHE_MEMCACHED_USE_BINARY === true ) {
                 $result = $mc->setOptions(
                     [
-                        Memcached::OPT_BINARY_PROTOCOL => SNAPCACHE_MEMCACHED_USE_BINARY === true,
+                        Memcached::OPT_BINARY_PROTOCOL => true,
+                        // Binary protocol is very slow without this
+                        Memcached::OPT_TCP_NODELAY => true,
                     ]
                 );
 
