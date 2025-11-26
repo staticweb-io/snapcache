@@ -191,7 +191,7 @@ if ( ! class_exists( 'Memcached' ) ) {
             }
 
             // If SNAPCACHE_MEMCACHED_SERVERS is not set,
-            // try to look it up an option from the
+            // try to look up an option from the
             // DB. We can do this because any competent
             // host will keep persistent connections,
             // so we won't do this query for most requests.
@@ -207,7 +207,7 @@ if ( ! class_exists( 'Memcached' ) ) {
                     'snapcache_memcached_servers'
                 )
             );
-            $raw = $result ? maybe_unserialize( $result ) : '';
+            $raw = $result ? maybe_unserialize( $result ) : 'localhost:11211';
             // Since the admin may type servers in a textarea, we want
             // to ignore blank lines and extra whitespace.
             $lines = array_map( trim( ... ), explode( "\n", $raw ) );
