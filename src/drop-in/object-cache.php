@@ -28,15 +28,20 @@ if ( ! class_exists( 'Memcached' ) ) {
         public Memcached $mc;
 
         private string $cache_key_salt_hash = '';
+
         // Array of group_name => true
         private array $global_groups;
+
         // Temporary cache that vanishes at
         // the end of script execution.
         private array $local_cache;
+
         // Marker object used to represent missing cache items
         private readonly object $local_missing_marker;
+
         // Array of group_name => array of keys => values
         private array $non_persistent_groups;
+
         // Array of pre-seeded keys
         private ?array $preseed_keys = null;
 
