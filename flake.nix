@@ -91,7 +91,7 @@
               composer install --no-cache --no-dev --optimize-autoloader
 
               mkdir -p "$out"
-              cp -r composer.json plugin.php readme.txt src uninstall.php vendor "$out"
+              cp -r composer.json readme.txt snapcache.php src uninstall.php vendor "$out"
             '';
         snapCacheWpOrgSrc = buildsnapCacheSrc "${releaseExtras}/release/wp-org/constants.php";
         snapCacheGitHubSrc = buildsnapCacheSrc "${releaseExtras}/release/github/constants.php";

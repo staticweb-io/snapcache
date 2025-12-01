@@ -31,7 +31,7 @@ return RectorConfig::configure()
             __DIR__ . '/src',
         ]
     )
-    ->withRootFiles() // Include plugin.php and uninstall.php
+    ->withRootFiles() // Include snapcache.php and uninstall.php
     ->withPhpSets() // Detects PHP version from composer.json
     ->withRules(
         [

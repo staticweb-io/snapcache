@@ -24,7 +24,7 @@ class Controller {
     }
 
     public static function init(): Controller {
-        $bootstrap_file = SNAPCACHE_PATH . 'plugin.php';
+        $bootstrap_file = SNAPCACHE_PATH . 'snapcache.php';
 
         register_activation_hook(
             $bootstrap_file,
