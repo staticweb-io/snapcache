@@ -2,7 +2,7 @@
   description = "SnapCache plugin for WordPress";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -34,7 +34,7 @@
           pname = "${name}-composer-deps-dev";
           version = "1.0.0";
           src = composerSrc;
-          vendorHash = "sha256-e9RvpmUeoSx5gXkLVsoGXBCSxojVZS9K1A+tQ09L3y4=";
+          vendorHash = "sha256-n8ME5bvWFErDVC/4jSUrTiiMGpfyi/48M63Jb7k+pWU=";
         });
         snapCacheSrc = pkgs.lib.cleanSourceWith {
           src = self;
