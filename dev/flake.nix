@@ -42,10 +42,10 @@
           pkgs,
           config,
           lib,
-          system,
           ...
         }:
         let
+          system = pkgs.stdenv.hostPlatform.system;
           getEnv = name: default: (if "" == builtins.getEnv name then default else builtins.getEnv name);
           enableXDebug = getEnv "ENABLE_XDEBUG" "false" == "true";
           skipPlugins = getEnv "SKIP_PLUGINS" "false" == "true";
