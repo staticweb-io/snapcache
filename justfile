@@ -50,10 +50,10 @@ _lint:
     php ./vendor/bin/parallel-lint src
 
 _phpcbf:
-    php ./vendor/bin/phpcbf -d memory_limit=512M --standard=./phpcs.xml --extensions=php src *.php || true
+    php ./vendor/bin/phpcbf -d memory_limit=512M --standard=./phpcs.xml --extensions=php src tests *.php || true
 
 _phpcs:
-    php ./vendor/bin/phpcs -d memory_limit=512M -s --standard=./phpcs.xml --extensions=php src *.php
+    php ./vendor/bin/phpcs -d memory_limit=512M -s --standard=./phpcs.xml --extensions=php src tests *.php
 
 # Run rector code transformations
 rector: && _phpcbf
