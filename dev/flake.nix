@@ -232,7 +232,6 @@
               );
             };
         in
-        with finalPkgs;
         {
           # `process-compose.foo` will add a flake package output called "foo".
           # Therefore, this will add a default package that you can build using
