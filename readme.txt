@@ -15,8 +15,8 @@ A high-performance persistent object cache powered by Memcached.
 SnapCache accelerates WordPress by providing a fast, reliable persistent object cache backed by Memcached.
 It dramatically reduces database load, speeds up page generation, and improves scalability under heavy traffic.
 
-SnapCache is designed to be safer and faster than existing
-object cache plugins. It will not break your site if the cache is unreachable, and is markedly faster than other popular object caches (see Benchmarks).
+SnapCache is designed to be safe and fast.
+See the Benchmarks section for performance results.
 
 = Features =
 
