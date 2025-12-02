@@ -163,9 +163,9 @@ class SettingsMain {
             </p>
             <p>
                 Saved values:
-        </p>
             <?php
         endif;
+        echo '</p>';
             $mc = Memcached::getSnapCacheMemcached();
             $servers = $mc::getServersFromConfig();
         if ( $servers !== [] ) {
