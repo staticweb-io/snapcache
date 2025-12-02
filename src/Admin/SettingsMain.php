@@ -161,14 +161,15 @@ class SettingsMain {
             Format: <code>host:port</code> or <code>host:port weight</code>.
             Default is <code>localhost:11211</code>.
             </p>
-            <p>
-                Saved values:
             <?php
         endif;
         echo '</p>';
             $mc = Memcached::getSnapCacheMemcached();
             $servers = $mc::getServersFromConfig();
         if ( $servers !== [] ) {
+            if ( $configurable ) {
+                echo '<p>Saved values</p>';
+            }
             ?>
             <table class="widefat striped" style="width: auto; margin-top: 10px;">
                 <thead>
