@@ -15,7 +15,7 @@ class SettingsMain {
             'snapcache_object_cache',
             [
                 'type' => 'string',
-                'sanitize_callback' => Options::conformObjectCacheType( ... ),
+                'sanitize_callback' => 'sanitize_text_field',
                 'default' => 'disabled',
             ]
         );
