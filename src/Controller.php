@@ -171,7 +171,8 @@ class Controller {
         $obj_cache = get_dropins()['object-cache.php'] ?? null;
 
         if ( $obj_cache === null ) {
-            if ( Options::getObjectCacheType() === 'memcached' ) {
+            if ( Options::getObjectCacheType() === 'memcached'
+            && Memcached::extensionAvailable() ) {
                 $mc = Memcached::getMemcached();
                 if ( $mc instanceof \Memcached && $mc->getVersion() !== false ) {
                     self::installObjectCache( true );

@@ -3,6 +3,14 @@
 namespace SnapCache;
 
 class Memcached {
+    /**
+     * Returns true if the memcached extension is
+     * available.
+     */
+    public static function extensionAvailable(): bool {
+        return extension_loaded( 'memcached' );
+    }
+
     /*
      * Returns the \Memcached instance used by the
      * object cache, or a new \Memcached instance if

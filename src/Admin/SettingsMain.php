@@ -135,7 +135,13 @@ class SettingsMain {
                     ' or run <code>wp snapcache memcached install</code>.)</span>';
                 }
             } elseif ( $val === 'memcached' ) {
-                echo '<span style="color: red">(Connection failed)</span>';
+                if ( Memcached::extensionAvailable() ) {
+                    echo '<span style="color: red">(Connection failed)</span>';
+                } else {
+                    echo '<span style="color: red">(Memcached extension not available)</span>';
+                }
+            } elseif ( ! Memcached::extensionAvailable() ) {
+                echo '(Memcached extension not available)';
             } else {
                 echo '(No server detected)';
             }
@@ -164,8 +170,12 @@ class SettingsMain {
             <?php
         endif;
         echo '</p>';
+        if ( Memcached::extensionAvailable() ) {
             $mc = Memcached::getSnapCacheMemcached();
             $servers = $mc::getServersFromConfig();
+        } else {
+            $servers = [];
+        }
         if ( $servers !== [] ) {
             if ( $configurable ) {
                 echo '<p>Saved values</p>';
