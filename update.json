@@ -1,7 +1,7 @@
 {
   "name": "SnapCache",
-  "version": "0.3.0",
-  "download_url": "https://github.com/staticweb-io/snapcache/releases/download/v0.3.0/plugin.zip",
+  "version": "1.0.0",
+  "download_url": "https://github.com/staticweb-io/snapcache/releases/download/v1.0.0/plugin.zip",
   "requires": "6.4",
   "tested": "6.9",
   "last_updated": "2025-12-01 22:16:14 -0600"
