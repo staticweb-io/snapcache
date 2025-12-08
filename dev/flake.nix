@@ -364,6 +364,7 @@
               phpPackages.composer
               shellcheck
               siege
+              subversion
               watchexec
               wp-cli
             ];
