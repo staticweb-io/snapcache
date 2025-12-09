@@ -2,10 +2,6 @@
   inputs = {
     nixos2505.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
-    finefile = {
-      url = "github:john-shaffer/finefile";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
@@ -352,7 +348,6 @@
             buildInputs = [
               fd
               hey
-              inputs.finefile.packages.${system}.default
               inferno
               jq
               jsonfmt
