@@ -2,6 +2,7 @@
   inputs = {
     nixos2505.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
@@ -46,6 +47,7 @@
           enableXDebug = getEnv "ENABLE_XDEBUG" "false" == "true";
           skipPlugins = getEnv "SKIP_PLUGINS" "false" == "true";
           nixpkgs2505 = import inputs.nixos2505 { inherit system; };
+          nixpkgs-unstable = import inputs.nixpkgs-unstable { inherit system; };
           phpExtensionsName = phpPackage + "Extensions";
           phpPackage = getEnv "PHP_PACKAGE" "php";
           snapCachePackage = getEnv "SNAPCACHE_PACKAGE" "pluginWpOrg";
@@ -91,6 +93,9 @@
             php81 = nixpkgs2505.php81;
             php81Extensions = nixpkgs2505.php81Extensions;
             php81Packages = nixpkgs2505.php81Packages;
+            php85 = nixpkgs-unstable.php85;
+            php85Extensions = nixpkgs-unstable.php85Extensions;
+            php85Packages = nixpkgs-unstable.php85Packages;
           };
           overlay = self: super: {
             php = super.${phpPackage}.buildEnv {
