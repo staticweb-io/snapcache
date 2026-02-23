@@ -2,6 +2,10 @@
 
 namespace SnapCache\Admin;
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 class Controller {
     public static function addMenuPage(): void {
         add_menu_page(

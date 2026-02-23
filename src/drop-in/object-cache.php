@@ -21,6 +21,10 @@
 
 declare(strict_types=1);
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 if ( ! class_exists( 'Memcached' ) ) {
     wp_using_ext_object_cache( false );
 } else {

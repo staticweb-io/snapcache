@@ -2,6 +2,10 @@
 
 namespace SnapCache;
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 class Controller {
     /**
      * Main controller
