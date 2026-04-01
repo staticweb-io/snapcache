@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.0.1 (2026-04-01)
+
 - Indicate support for WordPress 7.0.
 
 ## 1.0.0 (2025-11-21)
