@@ -28,10 +28,13 @@ check: _check_no_test test
 _nix-system:
     @nix eval --impure --raw --expr 'builtins.currentSystem'
 
+_emit-log log:
+    @if [ -t 1 ]; then cat "{{ log }}"; else sed 's/\x1b\[[0-9;]*m//g' "{{ log }}"; fi
+
 _check_no_test:
     #!/usr/bin/env bash
     out=$(nix build --print-out-paths ".#checks.$(just _nix-system).snapCacheCheck")
-    if [ -t 1 ]; then cat "$out/log"; else sed 's/\x1b\[[0-9;]*m//g' "$out/log"; fi
+    just _emit-log "$out/log"
 
 _check_no_test_raw: _lint _validate _phpcs
     php ./vendor/bin/rector --debug --dry-run --ansi
