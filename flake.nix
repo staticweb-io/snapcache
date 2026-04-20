@@ -135,7 +135,8 @@
             cd "$PLUGIN_DIR"
             cp -a "${composerVendor}/vendor" .
             cp -r --no-preserve=mode "$src"/* .
-            just _check_no_test
+            set -o pipefail
+            just _check_no_test_raw 2>&1 | tee "$out/log"
           '';
         };
       in

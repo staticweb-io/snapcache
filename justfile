@@ -25,7 +25,12 @@ build-wp-org:
 # Run tests and other checks
 check: _check_no_test test
 
-_check_no_test: _lint _validate _phpcs
+_check_no_test:
+    #!/usr/bin/env bash
+    out=$(nix build --print-out-paths ".#checks.$(nix eval --impure --raw --expr 'builtins.currentSystem').snapCacheCheck")
+    if [ -t 1 ]; then cat "$out/log"; else sed 's/\x1b\[[0-9;]*m//g' "$out/log"; fi
+
+_check_no_test_raw: _lint _validate _phpcs
     php ./vendor/bin/rector --debug --dry-run
 
 # Run development server
