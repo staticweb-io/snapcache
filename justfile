@@ -31,7 +31,7 @@ _check_no_test:
     if [ -t 1 ]; then cat "$out/log"; else sed 's/\x1b\[[0-9;]*m//g' "$out/log"; fi
 
 _check_no_test_raw: _lint _validate _phpcs
-    php ./vendor/bin/rector --debug --dry-run
+    php ./vendor/bin/rector --debug --dry-run --ansi
 
 # Run development server
 [working-directory('dev')]
@@ -49,13 +49,13 @@ _format-php:
     just _phpcbf || true && just _phpcs
 
 _lint:
-    php ./vendor/bin/parallel-lint src
+    php ./vendor/bin/parallel-lint --colors src
 
 _phpcbf:
     php ./vendor/bin/phpcbf -d memory_limit=512M --standard=./phpcs.xml --extensions=php src tests *.php || true
 
 _phpcs:
-    php ./vendor/bin/phpcs -d memory_limit=512M -s --standard=./phpcs.xml --extensions=php src tests *.php
+    php ./vendor/bin/phpcs -d memory_limit=512M -s --colors --standard=./phpcs.xml --extensions=php src tests *.php
 
 # Run rector code transformations
 rector: && _phpcbf
