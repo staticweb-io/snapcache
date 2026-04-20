@@ -25,9 +25,12 @@ build-wp-org:
 # Run tests and other checks
 check: _check_no_test test
 
+_nix-system:
+    @nix eval --impure --raw --expr 'builtins.currentSystem'
+
 _check_no_test:
     #!/usr/bin/env bash
-    out=$(nix build --print-out-paths ".#checks.$(nix eval --impure --raw --expr 'builtins.currentSystem').snapCacheCheck")
+    out=$(nix build --print-out-paths ".#checks.$(just _nix-system).snapCacheCheck")
     if [ -t 1 ]; then cat "$out/log"; else sed 's/\x1b\[[0-9;]*m//g' "$out/log"; fi
 
 _check_no_test_raw: _lint _validate _phpcs
