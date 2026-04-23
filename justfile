@@ -23,7 +23,13 @@ build-wp-org:
     nix build .#pluginWpOrg
 
 # Run tests and other checks
-check: _check_no_test test
+check: _ensure-tmpdir _check_no_test test
+
+# Sometimes editors get a stale TMPDIR.
+
+# This prevents issues with the dir not existing.
+_ensure-tmpdir:
+    @[ -z "${TMPDIR:-}" ] || mkdir -p "$TMPDIR"
 
 _nix-system:
     @nix eval --impure --raw --expr 'builtins.currentSystem'
@@ -50,7 +56,7 @@ dev CLEAN="false" DEBUG="false":
     {{ if DEBUG == "true" { "ENABLE_XDEBUG=true nix run . --impure -- --no-server" } else { "nix run . -- --no-server" } }}
 
 # Format source and then check for unfixable issues
-format: && _format-php
+format: _ensure-tmpdir && _format-php
     just --fmt --unstable
     fd -e json -x jsonfmt -w
     fd -e nix -x nixfmt
@@ -95,7 +101,7 @@ svn-update:
     svn up "{{ svn_dir }}"
 
 # Validate and run tests in a sandbox
-test: _validate _phpcs _test-integration
+test: _ensure-tmpdir _validate _phpcs _test-integration
 
 # Run integration tests in a sandbox
 _test-integration:
