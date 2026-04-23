@@ -29,7 +29,11 @@ _nix-system:
     @nix eval --impure --raw --expr 'builtins.currentSystem'
 
 _emit-log log:
-    @if [ -t 1 ]; then cat "{{ log }}"; else sed 's/\x1b\[[0-9;]*m//g' "{{ log }}"; fi
+    @if [ -f "{{ log }}" ]; then \
+        if [ -t 1 ]; then cat "{{ log }}"; else sed 's/\x1b\[[0-9;]*m//g' "{{ log }}"; fi; \
+    else \
+        if [ -t 1 ]; then nix store cat "{{ log }}"; else nix store cat "{{ log }}" | sed 's/\x1b\[[0-9;]*m//g'; fi; \
+    fi
 
 _check_no_test:
     #!/usr/bin/env bash
