@@ -1,0 +1,22 @@
+description = "Delete removes a key from the cache"
+
+[[steps]]
+do = "set"
+key = "todelete"
+value = "gone"
+returns = true
+
+[[steps]]
+do = "get"
+key = "todelete"
+returns = "gone"
+
+[[steps]]
+do = "delete"
+key = "todelete"
+returns = true
+
+[[steps]]
+do = "get"
+key = "todelete"
+returns = false

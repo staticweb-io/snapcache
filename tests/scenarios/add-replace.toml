@@ -1,0 +1,55 @@
+description = "Add and replace semantics"
+
+# add fails when key already exists
+[[steps]]
+do = "set"
+key = "existing"
+value = "original"
+returns = true
+
+[[steps]]
+do = "add"
+key = "existing"
+value = "new"
+returns = false
+
+[[steps]]
+do = "get"
+key = "existing"
+returns = "original"
+
+# replace fails when key does not exist
+[[steps]]
+do = "replace"
+key = "missing"
+value = "val"
+returns = false
+
+[[steps]]
+do = "get"
+key = "missing"
+returns = false
+
+# add succeeds when key does not exist
+[[steps]]
+do = "add"
+key = "missing"
+value = "added"
+returns = true
+
+[[steps]]
+do = "get"
+key = "missing"
+returns = "added"
+
+# replace succeeds when key exists
+[[steps]]
+do = "replace"
+key = "missing"
+value = "replaced"
+returns = true
+
+[[steps]]
+do = "get"
+key = "missing"
+returns = "replaced"

@@ -1,0 +1,46 @@
+description = "Cache groups isolate keys with the same name"
+
+[[steps]]
+do = "set"
+key = "shared-key"
+value = "value-a"
+group = "group-a"
+returns = true
+
+[[steps]]
+do = "set"
+key = "shared-key"
+value = "value-b"
+group = "group-b"
+returns = true
+
+[[steps]]
+do = "get"
+key = "shared-key"
+group = "group-a"
+returns = "value-a"
+
+[[steps]]
+do = "get"
+key = "shared-key"
+group = "group-b"
+returns = "value-b"
+
+# key in one group is not visible in another
+[[steps]]
+do = "delete"
+key = "shared-key"
+group = "group-a"
+returns = true
+
+[[steps]]
+do = "get"
+key = "shared-key"
+group = "group-a"
+returns = false
+
+[[steps]]
+do = "get"
+key = "shared-key"
+group = "group-b"
+returns = "value-b"

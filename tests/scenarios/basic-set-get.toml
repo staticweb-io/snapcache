@@ -1,0 +1,17 @@
+description = "Basic set and get operations"
+
+[[steps]]
+do = "set"
+key = "foo"
+value = "bar"
+returns = true
+
+[[steps]]
+do = "get"
+key = "foo"
+returns = "bar"
+
+[[steps]]
+do = "get"
+key = "nonexistent-key"
+returns = false
