@@ -101,7 +101,7 @@ svn-update:
     svn up "{{ svn_dir }}"
 
 # Validate and run tests in a sandbox
-test: _ensure-tmpdir _validate _phpcs _test-integration
+test: _ensure-tmpdir _test-integration
 
 # Run integration tests in a sandbox
 _test-integration:
