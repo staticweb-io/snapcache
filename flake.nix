@@ -91,6 +91,9 @@
               cp ${constantsFile} constants.php
               just rector
 
+              # Strip dev dependencies before packaging
+              COMPOSER_DISABLE_NETWORK=1 composer --no-cache --no-interaction --no-dev --optimize-autoloader install
+
               mkdir -p "$out"
               cp -r composer.json readme.txt snapcache.php src uninstall.php vendor "$out"
             '';

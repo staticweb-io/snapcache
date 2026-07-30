@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Fix a packaging issue that added dev dependencies to the plugin zip in 1.1.0.
+
 ## 1.1.0 (2026-07-30)
 
 - Verify support for WordPress 7.1.
