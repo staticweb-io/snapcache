@@ -23,7 +23,7 @@ build-wp-org:
     nix build .#pluginWpOrg
 
 # Run tests and other checks
-check: _ensure-tmpdir _check_no_test test
+check: _ensure-tmpdir _check_no_test _check_plugin_check test
 
 # Sometimes editors get a stale TMPDIR.
 
@@ -50,6 +50,24 @@ _check_no_test:
     else
         drv=$(nix path-info --derivation "$attr" 2>/dev/null || true)
         [ -n "$drv" ] && nix log "$drv" 2>/dev/null || true
+        exit 1
+    fi
+
+_check_plugin_check:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    out=$(nix build --print-out-paths './dev#plugin-check-report')
+    report="$out/report.json"
+    if grep -qxF 'Success: Checks complete. No errors found.' "$report"; then
+        : # success message
+    elif jq -e '. == []' "$report" > /dev/null 2>&1; then
+        : # empty JSON array
+    elif jq -e '. | length > 0' "$report" > /dev/null 2>&1; then
+        jq . "$report"
+        exit 1
+    else
+        echo "Unexpected plugin-check output:"
+        cat "$report"
         exit 1
     fi
 

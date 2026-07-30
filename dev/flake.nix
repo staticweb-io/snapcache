@@ -373,68 +373,92 @@
               just --list
             '';
           };
-          packages.plugin-check-report = runCommand "plugin-check-report" {
-            nativeBuildInputs = [
-              mariadb
-              php
-              unzip
-              wp-cli
-            ];
-          } ''
-            export HOME="$TMPDIR/home"
-            mkdir -p "$HOME"
+          checks.plugin-check =
+            runCommand "plugin-check"
+              {
+                nativeBuildInputs = [ jq ];
+              }
+              ''
+                report=${self'.packages.plugin-check-report}/report.json
+                if grep -qxF 'Success: Checks complete. No errors found.' "$report"; then
+                  : # success message
+                elif jq -e '. == []' "$report" > /dev/null 2>&1; then
+                  : # empty JSON array
+                elif jq -e '. | length > 0' "$report" > /dev/null 2>&1; then
+                  jq . "$report" >&2
+                  exit 1
+                else
+                  echo "Unexpected plugin-check output:" >&2
+                  cat "$report" >&2
+                  exit 1
+                fi
+                touch "$out"
+              '';
+          packages.plugin-check-report =
+            runCommand "plugin-check-report"
+              {
+                nativeBuildInputs = [
+                  mariadb
+                  php
+                  unzip
+                  wp-cli
+                ];
+              }
+              ''
+                export HOME="$TMPDIR/home"
+                mkdir -p "$HOME"
 
-            MYSQL_DIR="$TMPDIR/mysql"
-            MYSQL_SOCK="$MYSQL_DIR/mysql.sock"
-            mkdir -p "$MYSQL_DIR"
+                MYSQL_DIR="$TMPDIR/mysql"
+                MYSQL_SOCK="$MYSQL_DIR/mysql.sock"
+                mkdir -p "$MYSQL_DIR"
 
-            mysql_install_db --datadir="$MYSQL_DIR/data" --auth-root-authentication-method=normal
+                mysql_install_db --datadir="$MYSQL_DIR/data" --auth-root-authentication-method=normal
 
-            mysqld \
-              --datadir="$MYSQL_DIR/data" \
-              --socket="$MYSQL_SOCK" \
-              --pid-file="$MYSQL_DIR/mysql.pid" \
-              --tmpdir="$TMPDIR" \
-              --skip-networking \
-              --log-error="$MYSQL_DIR/mysql.log" &
+                mysqld \
+                  --datadir="$MYSQL_DIR/data" \
+                  --socket="$MYSQL_SOCK" \
+                  --pid-file="$MYSQL_DIR/mysql.pid" \
+                  --tmpdir="$TMPDIR" \
+                  --skip-networking \
+                  --log-error="$MYSQL_DIR/mysql.log" &
 
-            for i in $(seq 1 30); do
-              if mysqladmin --socket="$MYSQL_SOCK" -u root ping 2>/dev/null; then
-                break
-              fi
-              sleep 1
-            done
+                for i in $(seq 1 30); do
+                  if mysqladmin --socket="$MYSQL_SOCK" -u root ping 2>/dev/null; then
+                    break
+                  fi
+                  sleep 1
+                done
 
-            mysql --socket="$MYSQL_SOCK" -u root -e 'CREATE DATABASE wordpress;'
+                mysql --socket="$MYSQL_SOCK" -u root -e 'CREATE DATABASE wordpress;'
 
-            WP_DIR="$TMPDIR/wordpress"
-            mkdir -p "$WP_DIR"
-            cp -r --no-preserve=mode ${wordpress}/share/wordpress/. "$WP_DIR/"
+                WP_DIR="$TMPDIR/wordpress"
+                mkdir -p "$WP_DIR"
+                cp -r --no-preserve=mode ${wordpress}/share/wordpress/. "$WP_DIR/"
 
-            wp config create \
-              --path="$WP_DIR" \
-              --dbname=wordpress \
-              --dbuser=root \
-              --dbpass="" \
-              --dbhost="localhost:$MYSQL_SOCK"
+                wp config create \
+                  --path="$WP_DIR" \
+                  --dbname=wordpress \
+                  --dbuser=root \
+                  --dbpass="" \
+                  --dbhost="localhost:$MYSQL_SOCK"
 
-            wp core install \
-              --path="$WP_DIR" \
-              --url=http://localhost \
-              --title=WordPress \
-              --admin_user=admin \
-              --admin_email=admin@example.com \
-              --admin_password=pass \
-              --skip-email
+                wp core install \
+                  --path="$WP_DIR" \
+                  --url=http://localhost \
+                  --title=WordPress \
+                  --admin_user=admin \
+                  --admin_email=admin@example.com \
+                  --admin_password=pass \
+                  --skip-email
 
-            unzip -q ${snapCache}/snapcache.zip -d "$WP_DIR/wp-content/plugins/"
-            unzip -q ${wpPluginCheck} -d "$WP_DIR/wp-content/plugins/"
+                unzip -q ${snapCachePkgs.pluginWpOrg}/snapcache.zip -d "$WP_DIR/wp-content/plugins/"
+                unzip -q ${wpPluginCheck} -d "$WP_DIR/wp-content/plugins/"
 
-            wp plugin activate snapcache plugin-check --path="$WP_DIR"
+                wp plugin activate snapcache plugin-check --path="$WP_DIR"
 
-            mkdir -p "$out"
-            wp plugin check snapcache --format=strict-json --path="$WP_DIR" > "$out/report.json" || true
-          '';
+                mkdir -p "$out"
+                wp plugin check snapcache --format=strict-json --path="$WP_DIR" > "$out/report.json" || true
+              '';
         };
     };
 }
