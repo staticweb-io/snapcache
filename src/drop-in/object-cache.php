@@ -121,7 +121,7 @@ if ( ! class_exists( 'Memcached' ) ) {
                 if ( ! is_array( $servers ) ) {
                     error_log( 'Invalid memcached server format' );
                 } elseif ( count( $servers ) !== count( $server_list ) ) {
-                    if ( ! ( $mc->resetServerList() && $mc->addServers( $servers ) ) ) {
+                    if ( ! $mc->resetServerList() || ! $mc->addServers( $servers ) ) {
                         error_log( 'Memcached addServers failed' );
                     }
                 } else {
