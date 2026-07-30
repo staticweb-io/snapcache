@@ -2,7 +2,7 @@
   description = "SnapCache plugin for WordPress";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -34,7 +34,7 @@
           pname = "${name}-composer-deps-dev";
           version = "1.0.0";
           src = composerSrc;
-          vendorHash = "sha256-CDubaEnG+6WP0tdcDxcI+GhT5VAASj+Hsk3ch9+wKvE=";
+          vendorHash = "sha256-VuYc72xifEYxbG1OpNPmqEMld0w0CsxYDTvhkH6q0To=";
         });
         snapCacheSrc = pkgs.lib.cleanSourceWith {
           src = self;
@@ -84,11 +84,12 @@
               cp -r --no-preserve=mode "${composerVendor}/vendor" .
               cp -r --no-preserve=mode "${snapCacheSrc}"/* .
 
+              # mkComposerVendor strips vendor/bin/; regenerate before using rector et al
+              COMPOSER_DISABLE_NETWORK=1 composer --no-cache --no-interaction --optimize-autoloader install
+
               # Lock certain constants and run rector to remove dead code
               cp ${constantsFile} constants.php
               just rector
-
-              composer install --no-cache --no-dev --optimize-autoloader
 
               mkdir -p "$out"
               cp -r composer.json readme.txt snapcache.php src uninstall.php vendor "$out"
@@ -133,8 +134,11 @@
             export PLUGIN_DIR="$TMPDIR/${name}"
             mkdir -p "$PLUGIN_DIR"
             cd "$PLUGIN_DIR"
-            cp -a "${composerVendor}/vendor" .
-            cp -r --no-preserve=mode "$src"/* .
+            cp -r --no-preserve=mode "${composerVendor}/vendor" "$src"/* .
+
+            # mkComposerVendor strips vendor/bin/; regenerate before using rector et al
+            COMPOSER_DISABLE_NETWORK=1 composer --no-cache --no-interaction --optimize-autoloader install
+
             set -o pipefail
             just _check_no_test_raw 2>&1 | tee "$out/log"
           '';
