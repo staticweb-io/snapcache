@@ -43,8 +43,15 @@ _emit-log log:
 
 _check_no_test:
     #!/usr/bin/env bash
-    out=$(nix build --print-out-paths ".#checks.$(just _nix-system).snapCacheCheck")
-    just _emit-log "$out/log"
+    set -euo pipefail
+    attr=".#checks.$(just _nix-system).snapCacheCheck"
+    if out=$(nix build --print-out-paths "$attr"); then
+        just _emit-log "$out/log"
+    else
+        drv=$(nix path-info --derivation "$attr" 2>/dev/null || true)
+        [ -n "$drv" ] && nix log "$drv" 2>/dev/null || true
+        exit 1
+    fi
 
 _check_no_test_raw: _lint _validate _phpcs
     php ./vendor/bin/rector --debug --dry-run --ansi
