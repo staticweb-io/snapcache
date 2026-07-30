@@ -69,6 +69,7 @@ function snapcache_deregister_scripts(): void {
 }
 
 add_action( 'wp_footer', 'snapcache_deregister_scripts' );
+add_filter( 'plugin_action_links_snapcache/snapcache.php', 'snapcache_plugin_action_links' );
 
 // TODO: move into own plugin for WP cleanup, don't belong in core
 remove_action( 'wp_head', 'wlwmanifest_link' );

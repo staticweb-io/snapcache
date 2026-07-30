@@ -1,6 +1,8 @@
 ## Unreleased
 
 - Verify support for WordPress 7.1.
+- Fix missing link to Settings on plugins page.
+
 ## 1.0.1 (2026-04-01)
 
 - Indicate support for WordPress 7.0.
