@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.1.0 (2026-07-30)
+
 - Verify support for WordPress 7.1.
 - Fix missing link to Settings on plugins page.
 - Remove code that disables some default WordPress actions.
