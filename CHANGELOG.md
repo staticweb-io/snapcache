@@ -1,5 +1,7 @@
 ## Unreleased
 
+# 1.1.1 (2026-07-31)
+
 - Fix a packaging issue that added dev dependencies to the plugin zip in 1.1.0.
 
 ## 1.1.0 (2026-07-30)

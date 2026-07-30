@@ -3,7 +3,7 @@ Contributors: staticwebio
 Tags: performance, speed, memcached, object cache
 Requires at least: 6.5
 Tested up to: 7.1
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -44,6 +44,9 @@ Requests per second in a default WordPress installation. Comparison of object ca
 
 Full changelog available at https://github.com/staticweb-io/snapcache/blob/master/CHANGELOG.md
 
+= 1.1.1 =
+- Fix a packaging issue that added dev dependencies to the plugin zip in 1.1.0.
+
 = 1.1.0 =
 Verify support for WordPress 7.1.
 Fix missing link to Settings on plugins page.
@@ -56,6 +59,9 @@ Indicate support for WordPress 7.0.
 Initial submission to WordPress.org.
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+- Fix a packaging issue that added dev dependencies to the plugin zip in 1.1.0.
 
 = 1.1.0 =
 Verify support for WordPress 7.1.
