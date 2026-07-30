@@ -7,3 +7,5 @@
  * in order to remove code entirely at build-time if
  * a feature is disabled.
  */
+
+declare(strict_types=1);
