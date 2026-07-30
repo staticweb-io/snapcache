@@ -1,7 +1,7 @@
 === SnapCache ===
 Contributors: staticwebio
 Tags: performance, speed, memcached, object cache
-Requires at least: 6.4
+Requires at least: 6.5
 Tested up to: 7.1
 Stable tag: 1.0.1
 Requires PHP: 8.1
@@ -36,7 +36,7 @@ Requests per second in a default WordPress installation. Comparison of object ca
 
 == Requirements ==
 
-* WordPress 6.4 or later
+* WordPress 6.5 or later
 * PHP 8.1+ with the Memcached extension installed
 * At least one accessible Memcached server
 
