@@ -57,24 +57,8 @@ function snapcache_plugin_action_links( $links ) {
     return $links;
 }
 
-/**
- * Prevent WP scripts from loading which aren't useful
- * on a statically exported site
- */
-function snapcache_deregister_scripts(): void {
-    wp_dequeue_script( 'wp-embed' );
-    wp_deregister_script( 'wp-embed' );
-    wp_dequeue_script( 'comment-reply' );
-    wp_deregister_script( 'comment-reply' );
-}
-
-add_action( 'wp_footer', 'snapcache_deregister_scripts' );
 add_filter( 'plugin_action_links_snapcache/snapcache.php', 'snapcache_plugin_action_links' );
 
-// TODO: move into own plugin for WP cleanup, don't belong in core
-remove_action( 'wp_head', 'wlwmanifest_link' );
-remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
-remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
 if ( defined( 'WP_CLI' ) ) {
     SnapCache\CLI\Base::init();
