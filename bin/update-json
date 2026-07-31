@@ -4,6 +4,10 @@ set -euo pipefail
 FLAKE_REF="github:staticweb-io/wordpress-flake"
 SYSTEM=$(nix eval --impure --expr builtins.currentSystem --raw)
 
+readme_headers=$(nix build --print-out-paths '.#readme-headers')
+requires=$(jq -r '.["Requires at least"]' "$readme_headers")
+echo "Declared minimum WP version (Requires at least): $requires"
+
 echo "Getting wordpress_* packages from $FLAKE_REF for system $SYSTEM..."
 
 # Sort wordpress packages by version descending
@@ -17,34 +21,38 @@ if [[ -z "$wordpress_packages" ]]; then
   echo "No wordpress_* packages found."
   exit 1
 fi
-last_success=""
-first_pkg=""
+tested_pkg=""
 for pkg in $wordpress_packages; do
-  [[ -z "$first_pkg" ]] && first_pkg="$pkg"
+  pkg_version="${pkg#wordpress_}"
+  pkg_version="${pkg_version//_/.}"
+  pkg_version="${pkg_version%.*}"
 
   echo -e "\n➡️  Running check for WORDPRESS_PACKAGE=$pkg"
   if WORDPRESS_PACKAGE="$pkg" nix flake check --impure ./dev; then
-    last_success="$pkg"
+    [[ -z "$tested_pkg" ]] && tested_pkg="$pkg"
   else
     echo "❌ Check failed for $pkg"
     break
   fi
+
+  # Stop once we've tested down to the declared minimum
+  if [[ "$pkg_version" == "$requires" ]]; then
+    break
+  fi
 done
 
-if [[ -n "$last_success" ]]; then
-  echo -e "\n✅ Last successful version: $last_success"
+if [[ -n "$tested_pkg" ]]; then
+  tested="${tested_pkg#wordpress_}"
+  tested="${tested//_/.}"
+  tested="${tested%.*}"
+  echo -e "\n✅ Tested up to: $tested"
 
   last_updated=$(git log -1 --format="%ci")
 
-  # Extract version from first_pkg (e.g., wordpress_6_8_1 → 6.8.1)
-  requires="${last_success#wordpress_}"
-  requires="${requires//_/.}"
-  requires="${requires%.*}"  # Remove the patch version
-  tested="${first_pkg#wordpress_}"
-  tested="${tested//_/.}"
-  tested="${tested%.*}"
+  # Update readme.txt Tested up to
+  sed -i "s/^Tested up to: .*/Tested up to: $tested/" readme.txt
 
-  # Update using jq
+  # Update update.json — requires comes from readme.txt declaration
   TMPUPDATE=$(mktemp)
   jq --arg requires "$requires" --arg tested "$tested" --arg last_updated "$last_updated" \
   '.requires = $requires | .tested = $tested | .last_updated = $last_updated' \
