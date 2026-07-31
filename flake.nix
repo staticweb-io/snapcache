@@ -13,6 +13,23 @@
       flake-utils,
       ...
     }:
+    let
+      lib = nixpkgs.lib;
+      readmeTxt = builtins.readFile ./readme.txt;
+      readmeHeaders =
+        let
+          lines = lib.splitString "\n" readmeTxt;
+          headerLines = builtins.filter
+            (l: builtins.match "[A-Z][a-zA-Z ]+: .+" l != null)
+            lines;
+          parseLine = l:
+            let parts = lib.splitString ": " l;
+            in lib.nameValuePair
+              (builtins.head parts)
+              (lib.concatStringsSep ": " (builtins.tail parts));
+        in
+        lib.listToAttrs (map parseLine headerLines);
+    in
     flake-utils.lib.eachDefaultSystem (
       system:
       with import nixpkgs { inherit system; };
@@ -149,13 +166,14 @@
       in
       {
         checks = { inherit snapCacheCheck; };
-        lib = { inherit snapCacheSrc; };
+        lib = { inherit snapCacheSrc readmeHeaders; };
         packages = {
           inherit composerVendor snapCache;
           plugin = snapCache;
           pluginGitHubSrc = snapCacheGitHubSrc;
           pluginWpOrg = snapCacheWpOrg;
           pluginWpOrgSrc = snapCacheWpOrgSrc;
+          readme-headers = writeText "readme-headers.json" (builtins.toJSON readmeHeaders);
         };
       }
     );
