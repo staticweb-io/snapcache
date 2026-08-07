@@ -76,29 +76,19 @@ if ( ! class_exists( 'Memcached' ) ) {
 
             // We can only enable binary protocol for new connections
             if ( $mc->isPristine() ) {
-                $result = $mc->setOptions(
-                    [
-                        Memcached::OPT_CONNECT_TIMEOUT => 500,
-                        Memcached::OPT_RETRY_TIMEOUT => 0,
-                    ]
-                );
-
-                if ( $result === false ) {
-                    error_log( 'Failed to set connection options for Memcached' );
-                }
+                $options = [
+                    Memcached::OPT_CONNECT_TIMEOUT => 500,
+                    Memcached::OPT_RETRY_TIMEOUT => 0,
+                    // This drastically speeds up small requests
+                    Memcached::OPT_TCP_NODELAY => true,
+                ];
 
                 if ( SNAPCACHE_MEMCACHED_USE_BINARY === true ) {
-                    $result = $mc->setOptions(
-                        [
-                            Memcached::OPT_BINARY_PROTOCOL => true,
-                            // Binary protocol is very slow without this
-                            Memcached::OPT_TCP_NODELAY => true,
-                        ]
-                    );
+                    $options[ Memcached::OPT_BINARY_PROTOCOL ] = true;
+                }
 
-                    if ( $result === false ) {
-                        error_log( 'Failed to enable binary protocol for Memcached' );
-                    }
+                if ( $mc->setOptions( $options ) === false ) {
+                    error_log( 'Failed to set connection options for Memcached' );
                 }
             }
             $admin = is_admin();

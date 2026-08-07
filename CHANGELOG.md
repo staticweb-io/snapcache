@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Use TCP no-delay by default. This greatly speeds up small requests.
+
 # 1.1.1 (2026-07-31)
 
 - Fix a packaging issue that added dev dependencies to the plugin zip in 1.1.0.
