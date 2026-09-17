@@ -2,6 +2,9 @@
 
 - Fix that delete_multiple returned results by internal cache key,
   not the caller's key.
+- Fix that a set_multiple() followed by a get() to one of the same keys,
+  during the same request, could return the input array to set_multiple
+  instead of the proper value.
 
 # 1.2.0 (2026-09-17)
 

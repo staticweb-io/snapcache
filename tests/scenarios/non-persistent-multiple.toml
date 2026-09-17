@@ -1,0 +1,87 @@
+description = "set_multiple and add_multiple store individual values in non-persistent groups"
+
+[[steps]]
+do = "add_non_persistent_groups"
+groups = ["np-group"]
+
+# set_multiple must store each value under its own key,
+# not the whole input array.
+[[steps]]
+do = "set_multiple"
+group = "np-group"
+[steps.data]
+np-a = "a"
+np-b = "b"
+[steps.returns]
+np-a = true
+np-b = true
+
+[[steps]]
+do = "get"
+key = "np-a"
+group = "np-group"
+returns = "a"
+
+[[steps]]
+do = "get"
+key = "np-b"
+group = "np-group"
+returns = "b"
+
+# add_multiple skips keys that already exist and stores
+# individual values for the rest.
+[[steps]]
+do = "add_multiple"
+group = "np-group"
+[steps.data]
+np-a = "ignored"
+np-c = "c"
+[steps.returns]
+np-a = false
+np-c = true
+
+[[steps]]
+do = "get"
+key = "np-a"
+group = "np-group"
+returns = "a"
+
+[[steps]]
+do = "get"
+key = "np-c"
+group = "np-group"
+returns = "c"
+
+# Same operations in a persistent group behave the same way.
+[[steps]]
+do = "set_multiple"
+[steps.data]
+p-a = "a"
+p-b = "b"
+[steps.returns]
+p-a = true
+p-b = true
+
+[[steps]]
+do = "get"
+key = "p-a"
+returns = "a"
+
+[[steps]]
+do = "add_multiple"
+[steps.data]
+p-a = "ignored"
+p-c = "c"
+[steps.returns]
+p-a = false
+p-c = true
+
+[[steps]]
+do = "get"
+key = "p-a"
+returns = "a"
+
+[[steps]]
+do = "get"
+key = "p-c"
+returns = "c"

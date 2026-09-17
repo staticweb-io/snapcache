@@ -43,6 +43,10 @@ class ScenarioRunner {
         // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
         $keys = isset( $step['keys'] ) ? var_export( (array) $step['keys'], true ) : null;
         // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
+        $data = isset( $step['data'] ) ? var_export( (array) $step['data'], true ) : null;
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
+        $groups = isset( $step['groups'] ) ? var_export( (array) $step['groups'], true ) : null;
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
         $group = var_export( (string) ( $step['group'] ?? '' ), true );
         $expiration = (int) ( $step['expiration'] ?? 0 );
 
@@ -52,7 +56,11 @@ class ScenarioRunner {
             'add'             => "wp_cache_add({$key}, {$value}, {$group}, {$expiration})",
             'replace'         => "wp_cache_replace({$key}, {$value}, {$group}, {$expiration})",
             'delete'          => "wp_cache_delete({$key}, {$group})",
+            'set_multiple'    => "wp_cache_set_multiple({$data}, {$group}, {$expiration})",
+            'add_multiple'    => "wp_cache_add_multiple({$data}, {$group}, {$expiration})",
             'delete_multiple' => "wp_cache_delete_multiple({$keys}, {$group})",
+            'add_non_persistent_groups'
+                                => "wp_cache_add_non_persistent_groups({$groups})",
             'flush'           => 'wp_cache_flush()',
             default           => throw new \RuntimeException( "Unknown operation: {$do}" ),
         };

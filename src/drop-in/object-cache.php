@@ -412,13 +412,12 @@ if ( ! class_exists( 'Memcached' ) ) {
 
             if ( isset( $this->non_persistent_groups[ $group ] ) ) {
                 $arr = [];
-                foreach ( array_keys( $data ) as $key ) {
+                foreach ( $data as $key => $v ) {
                     $k = $this->cache_key( $key, $group );
                     if ( array_key_exists( $k, $this->non_persistent_groups[ $group ] ) ) {
                         $arr[ $key ] = false;
                     } else {
-                        $data = self::maybe_clone( $data );
-                        $this->non_persistent_groups[ $group ][ $k ] = $data;
+                        $this->non_persistent_groups[ $group ][ $k ] = self::maybe_clone( $v );
                         $arr[ $key ] = true;
                     }
                 }
@@ -944,10 +943,9 @@ if ( ! class_exists( 'Memcached' ) ) {
 
             if ( isset( $this->non_persistent_groups[ $group ] ) ) {
                 $arr = [];
-                foreach ( array_keys( $data ) as $key ) {
+                foreach ( $data as $key => $v ) {
                     $k = $this->cache_key( $key, $group );
-                    $data = self::maybe_clone( $data );
-                    $this->non_persistent_groups[ $group ][ $k ] = $data;
+                    $this->non_persistent_groups[ $group ][ $k ] = self::maybe_clone( $v );
                     $arr[ $key ] = true;
                 }
                 return $arr;
