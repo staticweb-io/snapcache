@@ -3,7 +3,7 @@ Contributors: staticwebio
 Tags: performance, speed, memcached, object cache
 Requires at least: 6.5
 Tested up to: 7.1
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -44,6 +44,13 @@ Requests per second in a default WordPress installation. Comparison of object ca
 
 Full changelog available at https://github.com/staticweb-io/snapcache/blob/master/CHANGELOG.md
 
+= 1.2.1 =
+Fix that delete_multiple returned results by internal cache key,
+not the caller's key.
+Fix that a set_multiple() followed by a get() to one of the same keys,
+during the same request, could return the input array to set_multiple
+instead of the proper value.
+
 = 1.2.0 =
 Use TCP no-delay by default. This greatly speeds up small requests.
 Show memcached stats on the plugin admin page.
@@ -63,6 +70,13 @@ Indicate support for WordPress 7.0.
 Initial submission to WordPress.org.
 
 == Upgrade Notice ==
+
+= 1.2.1 =
+Fix that delete_multiple returned results by internal cache key,
+not the caller's key.
+Fix that a set_multiple() followed by a get() to one of the same keys,
+during the same request, could return the input array to set_multiple
+instead of the proper value.
 
 = 1.2.0 =
 Use TCP no-delay by default. This greatly speeds up small requests.

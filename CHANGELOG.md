@@ -1,5 +1,7 @@
 ## Unreleased
 
+# 1.2.1 (2026-09-17)
+
 - Fix that delete_multiple returned results by internal cache key,
   not the caller's key.
 - Fix that a set_multiple() followed by a get() to one of the same keys,
