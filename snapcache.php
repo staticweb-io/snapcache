@@ -3,7 +3,7 @@
  * Plugin Name:       SnapCache
  * Plugin URI:        https://github.com/staticweb-io/snapcache
  * Description:       Memcached object cache
- * Version:           1.1.1
+ * Version:           1.2.0
  * Author:            StaticWeb.io
  * Author URI:        https://staticweb.io
  * Text Domain:       snapcache

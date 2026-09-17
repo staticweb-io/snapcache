@@ -35,7 +35,7 @@
       with pkgs;
       let
         name = "snapcache";
-        version = "1.1.1";
+        version = "1.2.0";
         composerSrc = pkgs.lib.cleanSourceWith {
           src = self;
           filter =
