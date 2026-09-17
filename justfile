@@ -80,6 +80,13 @@ dev CLEAN="false" DEBUG="false":
     {{ if CLEAN == "true" { "rm -rf data" } else { "" } }}
     {{ if DEBUG == "true" { "ENABLE_XDEBUG=true nix run . --impure -- --no-server" } else { "nix run . -- --no-server" } }}
 
+# Sync current plugin source into the running dev WordPress install
+sync-dev:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    src="$(nix build .#pluginWpOrgSrc --print-out-paths)"
+    rsync -a --no-times --delete --chmod=D755,F644 "$src"/ "{{ wordpress_dir }}/wp-content/plugins/snapcache/"
+
 # Format source and then check for unfixable issues
 format: _ensure-tmpdir && _format-php
     just --fmt --unstable
