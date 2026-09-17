@@ -3,9 +3,43 @@
 namespace SnapCache\Admin;
 
 use SnapCache\Memcached;
+use SnapCache\MemcachedStats;
 use SnapCache\Options;
 
 class SettingsMain {
+    private const STATS_CSS = '
+        .snapcache-meter {
+            -webkit-appearance: none;
+            appearance: none;
+            display: block;
+            width: 100%;
+            height: 6px;
+            margin: 6px 0 4px;
+            border: none;
+        }
+        .snapcache-meter::-webkit-meter-bar {
+            background: #f0f0f1;
+            border: none;
+            border-radius: 3px;
+        }
+        .snapcache-meter::-webkit-meter-optimum-value,
+        .snapcache-meter::-webkit-meter-suboptimum-value,
+        .snapcache-meter::-webkit-meter-even-less-good-value {
+            background: #2271b1;
+            border-radius: 3px;
+        }
+        .snapcache-meter::-moz-meter-bar { background: #2271b1; }
+    ';
+
+    /**
+     * Enqueue admin styles for the settings page.
+     */
+    public static function enqueueStyles(): void {
+        wp_register_style( 'snapcache-admin', false, [], SNAPCACHE_VERSION );
+        wp_enqueue_style( 'snapcache-admin' );
+        wp_add_inline_style( 'snapcache-admin', self::STATS_CSS );
+    }
+
     /**
      * Register admin settings.
      */
@@ -73,6 +107,9 @@ class SettingsMain {
                 submit_button();
                 ?>
             </form>
+
+            <h2>Memcached Stats</h2>
+            <?php self::renderStats(); ?>
         </div>
         <?php
     }
@@ -216,5 +253,106 @@ class SettingsMain {
             </p>
                 <?php
             endif;
+    }
+
+    private static function renderStats(): void {
+        $data = MemcachedStats::get();
+
+        if ( isset( $data['error'] ) ) {
+            echo '<p>' . esc_html( $data['error'] ) . '</p>';
+            return;
+        }
+
+        foreach ( $data['servers'] as $server_data ) {
+            self::renderServerStats( $server_data );
+        }
+    }
+
+    /**
+     * @param array{
+     *   server: string,
+     *   version?: string,
+     *   error?: string,
+     *   cards?: array<int, array{
+     *     label: string,
+     *     value: string,
+     *     sub: string,
+     *     meter: array{value: float, max: float}|null,
+     *   }>,
+     *   raw?: array<string, mixed>,
+     * } $server_data
+     */
+    private static function renderServerStats( array $server_data ): void {
+        $heading = $server_data['server'];
+        if ( isset( $server_data['version'] ) ) {
+            $heading .= ' (v' . $server_data['version'] . ')';
+        }
+        echo '<h3>' . esc_html( $heading ) . '</h3>';
+
+        if ( isset( $server_data['error'] ) ) {
+            echo '<p style="color: #d63638;">' . esc_html( $server_data['error'] ) . '</p>';
+            return;
+        }
+        ?>
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0 24px;">
+            <?php foreach ( $server_data['cards'] as $card ) : ?>
+                <?php self::renderStatCard( $card ); ?>
+            <?php endforeach; ?>
+        </div>
+        <details>
+            <summary style="cursor: pointer; margin-bottom: 8px; user-select: none;">
+                All stats
+            </summary>
+            <table class="widefat striped" style="width: auto; margin-top: 8px;">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ( $server_data['raw'] as $name => $value ) : ?>
+                    <tr>
+                        <td><?php echo esc_html( (string) $name ); ?></td>
+                        <td><?php echo esc_html( (string) $value ); ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </details>
+        <?php
+    }
+
+    /**
+     * @param array{
+     *   label: string,
+     *   value: string,
+     *   sub: string,
+     *   meter: array{value: float, max: float}|null,
+     * } $card
+     */
+    private static function renderStatCard( array $card ): void {
+        ?>
+        <div style="background: #fff; border: 1px solid #c3c4c7; border-radius: 4px;
+            padding: 14px 18px; min-width: 140px;">
+            <div style="font-size: 11px; color: #646970; text-transform: uppercase;
+                letter-spacing: .5px; margin-bottom: 4px;">
+                <?php echo esc_html( $card['label'] ); ?>
+            </div>
+            <div style="font-size: 22px; font-weight: 600; line-height: 1.2;">
+                <?php echo esc_html( $card['value'] ); ?>
+            </div>
+            <?php if ( $card['meter'] !== null ) : ?>
+            <meter class="snapcache-meter"
+                value="<?php echo esc_attr( (string) $card['meter']['value'] ); ?>"
+                min="0"
+                max="<?php echo esc_attr( (string) $card['meter']['max'] ); ?>">
+            </meter>
+            <?php endif; ?>
+            <div style="font-size: 12px; color: #646970;">
+                <?php echo esc_html( $card['sub'] ); ?>
+            </div>
+        </div>
+        <?php
     }
 }

@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Use TCP no-delay by default. This greatly speeds up small requests.
+- Show memcached stats on the plugin admin page.
 
 # 1.1.1 (2026-07-31)
 

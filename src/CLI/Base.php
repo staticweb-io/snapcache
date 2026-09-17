@@ -7,6 +7,7 @@ use WP_CLI;
 class Base {
     public static function init(): void {
         WP_CLI::add_command( self::getName(), self::class );
+        DebugInternal::registerCommands();
         Memcached::registerCommands();
     }
 

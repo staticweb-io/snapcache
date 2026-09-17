@@ -24,6 +24,8 @@ class Controller {
         if ( $hook_suffix !== self::$hook_suffix ) {
             return;
         }
+
+        SettingsMain::enqueueStyles();
     }
 
     /**
