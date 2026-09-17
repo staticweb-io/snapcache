@@ -750,9 +750,7 @@ if ( ! class_exists( 'Memcached' ) ) {
                 );
             }
 
-            if ( ! isset( $ks_to_keys ) ) {
-                $ks_to_keys = array_combine( $ks, $keys );
-            }
+            $ks_to_keys ??= array_combine( $ks, $keys );
 
             // These do essentially the same thing if $local is
             // empty, but the then branch can skip the lookups.

@@ -148,9 +148,7 @@ class FilesHelper {
             } else {
                 $init = WP_Filesystem( $creds );
             }
-            if ( $init === null ) {
-                $init = false;
-            }
+            $init ??= false;
             self::$wpfs_initialized = $init;
             if ( $throw_on_failure && ! $init ) {
                 throw new SnapCacheException( 'WP_Filesystem failed to initialize' );
