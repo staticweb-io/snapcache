@@ -7,8 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Controller {
+    private static string $hook_suffix = '';
+
     public static function addMenuPage(): void {
-        add_menu_page(
+        self::$hook_suffix = (string) add_menu_page(
             'SnapCache',
             'SnapCache',
             'manage_options',
@@ -16,6 +18,12 @@ class Controller {
             SettingsMain::render( ... ),
             'dashicons-superhero'
         );
+    }
+
+    public static function enqueueAssets( string $hook_suffix ): void {
+        if ( $hook_suffix !== self::$hook_suffix ) {
+            return;
+        }
     }
 
     /**
@@ -29,6 +37,10 @@ class Controller {
         add_action(
             'admin_menu',
             self::addMenuPage( ... )
+        );
+        add_action(
+            'admin_enqueue_scripts',
+            self::enqueueAssets( ... )
         );
     }
 }
