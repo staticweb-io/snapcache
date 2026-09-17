@@ -41,17 +41,20 @@ class ScenarioRunner {
         // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
         $value = isset( $step['value'] ) ? var_export( $step['value'], true ) : null;
         // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
+        $keys = isset( $step['keys'] ) ? var_export( (array) $step['keys'], true ) : null;
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
         $group = var_export( (string) ( $step['group'] ?? '' ), true );
         $expiration = (int) ( $step['expiration'] ?? 0 );
 
         $call = match ( $do ) {
-            'set'     => "wp_cache_set({$key}, {$value}, {$group}, {$expiration})",
-            'get'     => "wp_cache_get({$key}, {$group})",
-            'add'     => "wp_cache_add({$key}, {$value}, {$group}, {$expiration})",
-            'replace' => "wp_cache_replace({$key}, {$value}, {$group}, {$expiration})",
-            'delete'  => "wp_cache_delete({$key}, {$group})",
-            'flush'   => 'wp_cache_flush()',
-            default   => throw new \RuntimeException( "Unknown operation: {$do}" ),
+            'set'             => "wp_cache_set({$key}, {$value}, {$group}, {$expiration})",
+            'get'             => "wp_cache_get({$key}, {$group})",
+            'add'             => "wp_cache_add({$key}, {$value}, {$group}, {$expiration})",
+            'replace'         => "wp_cache_replace({$key}, {$value}, {$group}, {$expiration})",
+            'delete'          => "wp_cache_delete({$key}, {$group})",
+            'delete_multiple' => "wp_cache_delete_multiple({$keys}, {$group})",
+            'flush'           => 'wp_cache_flush()',
+            default           => throw new \RuntimeException( "Unknown operation: {$do}" ),
         };
 
         $php = "\$_r = {$call};\n";

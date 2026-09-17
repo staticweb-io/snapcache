@@ -1,5 +1,8 @@
 ## Unreleased
 
+- Fix that delete_multiple returned results by internal cache key,
+  not the caller's key.
+
 # 1.2.0 (2026-09-17)
 
 - Use TCP no-delay by default. This greatly speeds up small requests.

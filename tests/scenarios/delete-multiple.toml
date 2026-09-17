@@ -1,0 +1,33 @@
+description = "delete_multiple returns results keyed by the caller's keys"
+
+[[steps]]
+do = "set"
+key = "dm-a"
+value = "a"
+returns = true
+
+[[steps]]
+do = "set"
+key = "dm-b"
+value = "b"
+returns = true
+
+# Results must be keyed by the keys passed in, not the internal
+# memcached key. A key that doesn't exist reports false.
+[[steps]]
+do = "delete_multiple"
+keys = ["dm-a", "dm-b", "dm-missing"]
+[steps.returns]
+dm-a = true
+dm-b = true
+dm-missing = false
+
+[[steps]]
+do = "get"
+key = "dm-a"
+returns = false
+
+[[steps]]
+do = "get"
+key = "dm-b"
+returns = false

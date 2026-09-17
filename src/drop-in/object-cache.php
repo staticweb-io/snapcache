@@ -520,36 +520,41 @@ if ( ! class_exists( 'Memcached' ) ) {
                 return [];
             }
 
-            $ks = array_map(
-                fn( int|string $k ): string => $this->cache_key( $k, $group ),
-                $keys,
-            );
+            // Map of internal cache key => caller's key, so
+            // results can be returned keyed like WordPress core does.
+            $ks_to_keys = [];
+            foreach ( $keys as $key ) {
+                $ks_to_keys[ $this->cache_key( $key, $group ) ] = $key;
+            }
 
             if ( isset( $this->non_persistent_groups[ $group ] ) ) {
-                foreach ( $ks as $k ) {
+                foreach ( $ks_to_keys as $k => $key ) {
                     unset( $this->non_persistent_groups[ $group ][ $k ] );
                 }
-                return array_fill_keys( $ks, true );
+                return array_fill_keys( $keys, true );
             }
 
             if ( $this->preseed_keys ) {
                 $this->fetch_all();
             }
 
-            $results = $this->mc->deleteMulti( $ks );
+            $results = $this->mc->deleteMulti( array_keys( $ks_to_keys ) );
 
-            foreach ( $results as $k => $v ) {
-                if ( $v === true ) {
+            $arr = [];
+            foreach ( $ks_to_keys as $k => $key ) {
+                // Missing entries and Memcached::RES_* constants
+                // are both treated as false.
+                if ( ( $results[ $k ] ?? false ) === true ) {
                     $this->local_cache[ $k ] = $this->local_missing_marker;
+                    $arr[ $key ] = true;
                 } else {
                     // We aren't sure of the state of the item
                     unset( $this->local_cache[ $k ] );
-                    // Turn Memcached::RES_* constants into false
-                    $results[ $k ] = false;
+                    $arr[ $key ] = false;
                 }
             }
 
-            return $results;
+            return $arr;
         }
 
         /**
