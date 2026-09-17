@@ -23,7 +23,7 @@ if ( ! defined( 'WP_CLI' ) && ! is_admin() ) {
     return;
 }
 
-define( 'SNAPCACHE_VERSION', '1.1.1' );
+define( 'SNAPCACHE_VERSION', '1.2.0' );
 define( 'SNAPCACHE_PATH', plugin_dir_path( __FILE__ ) );
 
 if ( file_exists( SNAPCACHE_PATH . 'vendor/autoload.php' ) ) {
