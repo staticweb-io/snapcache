@@ -3,6 +3,7 @@
   "version": "1.2.1",
   "download_url": "https://github.com/staticweb-io/snapcache/releases/download/v1.2.1/plugin.zip",
   "requires": "6.5",
+  "requires_php": "8.2",
   "tested": "7.1",
   "last_updated": "2026-09-17 16:15:26 -0500"
 }

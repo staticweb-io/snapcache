@@ -1,6 +1,5 @@
 {
   inputs = {
-    nixos2505.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
@@ -45,7 +44,6 @@
           getEnv = name: default: (if "" == builtins.getEnv name then default else builtins.getEnv name);
           enableXDebug = getEnv "ENABLE_XDEBUG" "false" == "true";
           skipPlugins = getEnv "SKIP_PLUGINS" "false" == "true";
-          nixpkgs2505 = import inputs.nixos2505 { inherit system; };
           phpExtensionsName = phpPackage + "Extensions";
           phpPackage = getEnv "PHP_PACKAGE" "php";
           snapCachePackage = getEnv "SNAPCACHE_PACKAGE" "pluginWpOrg";
@@ -88,9 +86,6 @@
               ++ (if enableXDebug then [ xdebug ] else [ ])
             );
           otherPhpVersionsOverlay = self: super: {
-            php81 = nixpkgs2505.php81;
-            php81Extensions = nixpkgs2505.php81Extensions;
-            php81Packages = nixpkgs2505.php81Packages;
           };
           overlay = self: super: {
             php = super.${phpPackage}.buildEnv {

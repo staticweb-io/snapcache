@@ -1,5 +1,7 @@
 ## Unreleased
 
+- End support for PHP 8.1.
+
 # 1.2.1 (2026-09-17)
 
 - Fix that delete_multiple returned results by internal cache key,
