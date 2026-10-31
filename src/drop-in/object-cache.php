@@ -574,7 +574,7 @@ if ( ! class_exists( 'Memcached' ) ) {
             $this->preseed_keys = null;
 
             foreach ( $results as $result ) {
-                $k = $result ['key'];
+                $k = $result['key'];
                 $this->local_cache[ $k ] = $result['value'];
                 unset( $preseed_map[ $k ] );
             }
@@ -1111,7 +1111,7 @@ if ( ! class_exists( 'Memcached' ) ) {
 
     function wp_cache_init(): void {
         global $wp_object_cache;
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride
+        // phpcs:ignore WordPress.WP.GlobalVariablesOverride
         $wp_object_cache = SnapCacheMemcached::initAndBuild();
         $wp_object_cache->get_seeds();
         wp_using_ext_object_cache( true );
