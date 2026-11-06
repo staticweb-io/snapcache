@@ -4,7 +4,7 @@ set -euo pipefail
 FLAKE_REF="github:staticweb-io/wordpress-flake"
 SYSTEM=$(nix eval --impure --expr builtins.currentSystem --raw)
 
-readme_headers=$(nix build --print-out-paths '.#readme-headers')
+readme_headers=$(nix build --print-out-paths '.#readmeHeaders')
 requires=$(jq -r '.["Requires at least"]' "$readme_headers")
 echo "Declared minimum WP version (Requires at least): $requires"
 

@@ -172,7 +172,7 @@
           pluginGitHubSrc = snapCacheGitHubSrc;
           pluginWpOrg = snapCacheWpOrg;
           pluginWpOrgSrc = snapCacheWpOrgSrc;
-          readme-headers = writeText "readme-headers.json" (builtins.toJSON readmeHeaders);
+          readmeHeaders = writeText "readme-headers.json" (builtins.toJSON readmeHeaders);
         };
       }
     );
