@@ -8,6 +8,11 @@ final class MemcachedObjectCacheTest extends TestCase {
 
     use ITTrait;
 
+    public function testBadArguments(): void
+    {
+        $this->evalEmbeddedTest( 'test-bad-arguments.php' );
+    }
+
     public function testGetSetAddReplace(): void
     {
         $this->evalEmbeddedTest( 'test-get-set-add-replace.php' );

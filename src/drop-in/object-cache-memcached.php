@@ -98,9 +98,10 @@ if (!class_exists('Memcached')) {
 			// requests, we must take care not to add servers
 			// that are already in the list.
 			if ($admin || empty($server_list)) {
+				$servers = null;
 				try {
 					$servers = $get_servers();
-				} catch (Exception $e) {
+				} catch (Throwable $e) {
 					error_log('Invalid memcached server format: ' . $e->getMessage());
 
 					// If we can't set servers, we just return with no
@@ -993,30 +994,48 @@ if (!class_exists('Memcached')) {
 		return;
 	}
 
-	function wp_cache_add(int|string $key, mixed $data, string $group = '', int $expire = 0): bool
+	function wp_cache_add($key, $data, $group = '', $expire = 0): bool
 	{
 		global $wp_object_cache;
-		return $wp_object_cache->add($key, $data, $group, $expire);
+		try {
+			return $wp_object_cache->add($key, $data, $group, $expire);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+			return false;
+		}
 	}
 
-	function wp_cache_add_global_groups(string|array $groups): void
+	function wp_cache_add_global_groups($groups): void
 	{
 		global $wp_object_cache;
-		$groups = (array) $groups;
-		$wp_object_cache->add_global_groups($groups);
+		try {
+			$groups = (array) $groups;
+			$wp_object_cache->add_global_groups($groups);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+		}
 	}
 
-	function wp_cache_add_multiple(array $data, string $group = '', int $expire = 0): array
+	function wp_cache_add_multiple($data, $group = '', $expire = 0): array
 	{
 		global $wp_object_cache;
-		return $wp_object_cache->add_multiple($data, $group, $expire);
+		try {
+			return $wp_object_cache->add_multiple($data, $group, $expire);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+			return [];
+		}
 	}
 
-	function wp_cache_add_non_persistent_groups(string|array $groups): void
+	function wp_cache_add_non_persistent_groups($groups): void
 	{
 		global $wp_object_cache;
-		$groups = (array) $groups;
-		$wp_object_cache->add_non_persistent_groups($groups);
+		try {
+			$groups = (array) $groups;
+			$wp_object_cache->add_non_persistent_groups($groups);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+		}
 	}
 
 	function wp_cache_close(): bool
@@ -1024,96 +1043,149 @@ if (!class_exists('Memcached')) {
 		return true;
 	}
 
-	function wp_cache_decr(int|string $key, int $offset = 1, string $group = ''): int|false
+	function wp_cache_decr($key, $offset = 1, $group = ''): int|false
 	{
 		global $wp_object_cache;
-		return $wp_object_cache->decr($key, $offset, $group);
+		try {
+			return $wp_object_cache->decr($key, $offset, $group);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+			return false;
+		}
 	}
 
-	function wp_cache_delete(int|string $key, string $group = ''): bool
+	function wp_cache_delete($key, $group = ''): bool
 	{
 		global $wp_object_cache;
-		return $wp_object_cache->delete($key, $group);
+		try {
+			return $wp_object_cache->delete($key, $group);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+			return false;
+		}
 	}
 
-	function wp_cache_delete_multiple(array $keys, string $group = ''): array
+	function wp_cache_delete_multiple($keys, $group = ''): array
 	{
 		global $wp_object_cache;
-		return $wp_object_cache->delete_multiple($keys, $group);
+		try {
+			return $wp_object_cache->delete_multiple($keys, $group);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+			return [];
+		}
 	}
 
 	function wp_cache_flush(): bool
 	{
 		global $wp_object_cache;
-		return $wp_object_cache->flush();
+		try {
+			return $wp_object_cache->flush();
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+			return false;
+		}
 	}
 
 	function wp_cache_flush_runtime(): bool
 	{
 		global $wp_object_cache;
-		return $wp_object_cache->flush_runtime();
+		try {
+			return $wp_object_cache->flush_runtime();
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+			return false;
+		}
 	}
 
-	function wp_cache_get(
-		int|string $key,
-		string $group = '',
-		bool $force = false,
-		?bool &$found = null
-	): mixed
+	function wp_cache_get($key, $group = '', $force = false, &$found = null): mixed
 	{
 		global $wp_object_cache;
-		return $wp_object_cache->get($key, $group, $force, $found);
+		try {
+			return $wp_object_cache->get($key, $group, $force, $found);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+			return false;
+		}
 	}
 
-	function wp_cache_get_multiple(array $keys, string $group = '', bool $force = false): mixed
+	function wp_cache_get_multiple($keys, $group = '', $force = false): array
 	{
 		global $wp_object_cache;
-		return $wp_object_cache->get_multiple($keys, $group, $force);
+		try {
+			return $wp_object_cache->get_multiple($keys, $group, $force);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+			return [];
+		}
 	}
 
-	function wp_cache_incr(int|string $key, int $offset = 1, string $group = ''): int|false
+	function wp_cache_incr($key, $offset = 1, $group = ''): int|false
 	{
 		global $wp_object_cache;
-		return $wp_object_cache->incr($key, $offset, $group);
+		try {
+			return $wp_object_cache->incr($key, $offset, $group);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+			return false;
+		}
 	}
 
 	function wp_cache_init(): void
 	{
 		global $wp_object_cache;
-
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride
-		$wp_object_cache = SnapCacheMemcached::initAndBuild();
-		$wp_object_cache->get_seeds();
-		wp_using_ext_object_cache(true);
+		try {
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride
+			$wp_object_cache = SnapCacheMemcached::initAndBuild();
+			$wp_object_cache->get_seeds();
+			wp_using_ext_object_cache(true);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+		}
 	}
 
-	function wp_cache_replace(
-		int|string $key,
-		mixed $data,
-		string $group = '',
-		int $expire = 0
-	): bool
+	function wp_cache_replace($key, $data, $group = '', $expire = 0): bool
 	{
 		global $wp_object_cache;
-		return $wp_object_cache->replace($key, $data, $group, $expire);
+		try {
+			return $wp_object_cache->replace($key, $data, $group, $expire);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+			return false;
+		}
 	}
 
-	function wp_cache_set(int|string $key, mixed $data, string $group = '', int $expire = 0): bool
+	function wp_cache_set($key, $data, $group = '', $expire = 0): bool
 	{
 		global $wp_object_cache;
-		return $wp_object_cache->set($key, $data, $group, $expire);
+		try {
+			return $wp_object_cache->set($key, $data, $group, $expire);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+			return false;
+		}
 	}
 
-	function wp_cache_set_multiple(array $data, string $group = '', int $expire = 0): array
+	function wp_cache_set_multiple($data, $group = '', $expire = 0): array
 	{
 		global $wp_object_cache;
-		return $wp_object_cache->set_multiple($data, $group, $expire);
+		try {
+			return $wp_object_cache->set_multiple($data, $group, $expire);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+			return [];
+		}
 	}
 
-	function wp_cache_supports(string $feature): bool
+	function wp_cache_supports($feature): bool
 	{
 		global $wp_object_cache;
-		return $wp_object_cache->supports($feature);
+		try {
+			return $wp_object_cache->supports($feature);
+		} catch (Throwable $e) {
+			error_log('SnapCache object cache error: ' . $e->getMessage());
+			return false;
+		}
 	}
 
 	wp_cache_init();
