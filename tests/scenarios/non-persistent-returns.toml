@@ -1,0 +1,78 @@
+description = "Non-persistent groups return the same results as WordPress core"
+
+[[steps]]
+do = "add_non_persistent_groups"
+groups = ["r-np"]
+
+[[steps]]
+do = "set"
+key = "a"
+value = "A"
+group = "r-np"
+returns = true
+
+# get_multiple is keyed by the caller's keys.
+
+[[steps]]
+do = "get_multiple"
+keys = ["a", "missing"]
+group = "r-np"
+[steps.returns]
+a = "A"
+missing = false
+
+[[steps]]
+do = "delete"
+key = "missing"
+group = "r-np"
+returns = false
+
+[[steps]]
+do = "delete_multiple"
+keys = ["a", "missing"]
+group = "r-np"
+[steps.returns]
+a = true
+missing = false
+
+[[steps]]
+do = "delete"
+key = "a"
+group = "r-np"
+returns = false
+
+# add on an existing key fails, and doesn't write to memcached.
+
+[[steps]]
+do = "add"
+key = "b"
+value = "first"
+group = "r-np"
+returns = true
+
+[[steps]]
+do = "add"
+key = "b"
+value = "second"
+group = "r-np"
+returns = false
+
+[[steps]]
+do = "get"
+key = "b"
+group = "r-np"
+returns = "first"
+
+# replace on a missing key fails.
+[[steps]]
+do = "replace"
+key = "missing"
+value = "v"
+group = "r-np"
+returns = false
+
+[[steps]]
+do = "get"
+key = "missing"
+group = "r-np"
+returns = false

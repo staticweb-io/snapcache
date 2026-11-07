@@ -379,10 +379,12 @@ if (!class_exists('Memcached')) {
 			}
 
 			$k = $this->cache_key($key, $group);
-			if (isset($this->non_persistent_groups[$group])
-				&& !array_key_exists($k, $this->non_persistent_groups[$group])) {
-				$data = self::maybe_clone($data);
-				$this->non_persistent_groups[$group][$k] = $data;
+			if (isset($this->non_persistent_groups[$group])) {
+				if (array_key_exists($k, $this->non_persistent_groups[$group])) {
+					return false;
+				}
+
+				$this->non_persistent_groups[$group][$k] = self::maybe_clone($data);
 				return true;
 			}
 
@@ -486,8 +488,9 @@ if (!class_exists('Memcached')) {
 		{
 			$k = $this->cache_key($key, $group);
 			if (isset($this->non_persistent_groups[$group])) {
+				$found = array_key_exists($k, $this->non_persistent_groups[$group]);
 				unset($this->non_persistent_groups[$group][$k]);
-				return true;
+				return $found;
 			}
 
 			if ($this->preseed_keys) {
@@ -524,11 +527,13 @@ if (!class_exists('Memcached')) {
 			}
 
 			if (isset($this->non_persistent_groups[$group])) {
+				$arr = [];
 				foreach ($ks_to_keys as $k => $key) {
+					$arr[$key] = array_key_exists($k, $this->non_persistent_groups[$group]);
 					unset($this->non_persistent_groups[$group][$k]);
 				}
 
-				return array_fill_keys($keys, true);
+				return $arr;
 			}
 
 			if ($this->preseed_keys) {
@@ -677,20 +682,18 @@ if (!class_exists('Memcached')) {
 				return [];
 			}
 
-			$ks = array_map(fn(int|string $k): string => $this->cache_key($k, $group), $keys);
 			if (isset($this->non_persistent_groups[$group])) {
 				$arr = [];
-				foreach ($ks as $k) {
-					if (array_key_exists($k, $this->non_persistent_groups[$group])) {
-						$arr[$k] = self::maybe_clone($this->non_persistent_groups[$group][$k]);
-					} else {
-						$arr[$k] = false;
-					}
+				foreach ($keys as $key) {
+					$k = $this->cache_key($key, $group);
+					$arr[$key] = array_key_exists($k, $this->non_persistent_groups[$group])
+						? self::maybe_clone($this->non_persistent_groups[$group][$k]) : false;
 				}
 
 				return $arr;
 			}
 
+			$ks = array_map(fn(int|string $k): string => $this->cache_key($k, $group), $keys);
 			if ($this->preseed_keys) {
 				$this->fetch_all();
 			}
@@ -853,10 +856,12 @@ if (!class_exists('Memcached')) {
 			}
 
 			$k = $this->cache_key($key, $group);
-			if (isset($this->non_persistent_groups[$group])
-				&& array_key_exists($k, $this->non_persistent_groups[$group])) {
-				$data = self::maybe_clone($data);
-				$this->non_persistent_groups[$group][$k] = $data;
+			if (isset($this->non_persistent_groups[$group])) {
+				if (!array_key_exists($k, $this->non_persistent_groups[$group])) {
+					return false;
+				}
+
+				$this->non_persistent_groups[$group][$k] = self::maybe_clone($data);
 				return true;
 			}
 
