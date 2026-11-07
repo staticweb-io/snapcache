@@ -287,13 +287,21 @@ if (!class_exists('Memcached')) {
 
 			$prefix = $force_global || isset($this->global_groups[$group])
 				? $this->global_prefix : $this->non_global_prefix;
-			$key = $prefix . $group . ':' . $key . $this->cache_key_salt_hash;
 
-			// Unfortunately WordPress uses a lot of keys with spaces,
-			// and the memcached text protocol doesn't allow that.
-			if (!SNAPCACHE_MEMCACHED_USE_BINARY && str_contains($key, ' ')) {
-				$key = str_replace(' ', '_', $key);
+			// Memcached keys can't have spaces or control characters, and
+			// WordPress uses a lot of keys with spaces. Encoding these keeps
+			// them from colliding with other keys, as encoding a % does too.
+			// A group can't have a colon, so that the first two mark its
+			// bounds and a key can have them.
+			if (preg_match('/[\x00-\x20%:\x7f]/', $group)) {
+				$group = rawurlencode($group);
 			}
+
+			if (is_string($key) && preg_match('/[\x00-\x20%\x7f]/', $key)) {
+				$key = rawurlencode($key);
+			}
+
+			$key = $prefix . ':' . $group . ':' . $key . $this->cache_key_salt_hash;
 
 			// Truncate long keys and add a hash.
 			// Memcached only allows 250 bytes for keys.

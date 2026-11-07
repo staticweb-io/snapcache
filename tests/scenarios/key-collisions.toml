@@ -1,0 +1,177 @@
+description = "Keys and groups with special characters don't collide with similar ones"
+
+# Each pair must be separate entries, including after reading from memcached.
+
+[[steps]]
+do = "set"
+key = "colon:key"
+value = "v1"
+group = "k-grp"
+returns = true
+
+[[steps]]
+do = "set"
+key = "key"
+value = "v2"
+group = "k-grp:colon"
+returns = true
+
+[[steps]]
+do = "set"
+key = "a b"
+value = "v3"
+group = "k-grp"
+returns = true
+
+[[steps]]
+do = "set"
+key = "a_b"
+value = "v4"
+group = "k-grp"
+returns = true
+
+[[steps]]
+do = "set"
+key = "a%20b"
+value = "v5"
+group = "k-grp"
+returns = true
+
+[[steps]]
+do = "set"
+key = "tab\tkey"
+value = "v6"
+group = "k-grp"
+returns = true
+
+[[steps]]
+do = "set"
+key = "newline\nkey"
+value = "v7"
+group = "k-grp"
+returns = true
+
+[[steps]]
+do = "set"
+key = "key"
+value = "v8"
+group = "group with spaces"
+returns = true
+
+[[steps]]
+do = "set"
+key = "key"
+value = "v9"
+group = "group_with_spaces"
+returns = true
+
+[[steps]]
+do = "get"
+key = "colon:key"
+group = "k-grp"
+returns = "v1"
+
+[[steps]]
+do = "get"
+key = "key"
+group = "k-grp:colon"
+returns = "v2"
+
+[[steps]]
+do = "get"
+key = "a b"
+group = "k-grp"
+returns = "v3"
+
+[[steps]]
+do = "get"
+key = "a_b"
+group = "k-grp"
+returns = "v4"
+
+[[steps]]
+do = "get"
+key = "a%20b"
+group = "k-grp"
+returns = "v5"
+
+[[steps]]
+do = "get"
+key = "tab\tkey"
+group = "k-grp"
+returns = "v6"
+
+[[steps]]
+do = "get"
+key = "newline\nkey"
+group = "k-grp"
+returns = "v7"
+
+[[steps]]
+do = "get"
+key = "key"
+group = "group with spaces"
+returns = "v8"
+
+[[steps]]
+do = "get"
+key = "key"
+group = "group_with_spaces"
+returns = "v9"
+
+[[steps]]
+do = "flush_runtime"
+
+[[steps]]
+do = "get"
+key = "colon:key"
+group = "k-grp"
+returns = "v1"
+
+[[steps]]
+do = "get"
+key = "key"
+group = "k-grp:colon"
+returns = "v2"
+
+[[steps]]
+do = "get"
+key = "a b"
+group = "k-grp"
+returns = "v3"
+
+[[steps]]
+do = "get"
+key = "a_b"
+group = "k-grp"
+returns = "v4"
+
+[[steps]]
+do = "get"
+key = "a%20b"
+group = "k-grp"
+returns = "v5"
+
+[[steps]]
+do = "get"
+key = "tab\tkey"
+group = "k-grp"
+returns = "v6"
+
+[[steps]]
+do = "get"
+key = "newline\nkey"
+group = "k-grp"
+returns = "v7"
+
+[[steps]]
+do = "get"
+key = "key"
+group = "group with spaces"
+returns = "v8"
+
+[[steps]]
+do = "get"
+key = "key"
+group = "group_with_spaces"
+returns = "v9"

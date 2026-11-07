@@ -1,6 +1,7 @@
 ## Unreleased
 
 - End support for PHP 8.1.
+- Encode cache keys so that similar keys can't collide.
 
 # 1.2.1 (2026-09-17)
 
