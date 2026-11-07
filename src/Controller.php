@@ -163,7 +163,7 @@ class Controller {
     ): void {
         if ( $force ) {
             FilesHelper::copyFile(
-                SNAPCACHE_PATH . 'src/drop-in/object-cache.php',
+                SNAPCACHE_PATH . 'src/drop-in/object-cache-memcached.php',
                 WP_CONTENT_DIR . '/object-cache.php',
             );
             if ( Options::getObjectCacheType() !== 'memcached' ) {

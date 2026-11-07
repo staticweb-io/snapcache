@@ -51,7 +51,7 @@ class Memcached {
             return $wp_object_cache;
         }
 
-        require_once SNAPCACHE_PATH . 'src/drop-in/object-cache.php';
+        require_once SNAPCACHE_PATH . 'src/drop-in/object-cache-memcached.php';
         if ( class_exists( 'SnapCacheMemcached' ) ) {
             return \SnapCacheMemcached::initAndBuild();
         }

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       SnapCache Object Cache
  * Plugin URI:        https://github.com/staticweb-io/snapcache
- * Description:       Object caching for WordPress.
+ * Description:       Object caching for WordPress with memcached.
  * Version:           1.2.1
  * Author:            StaticWeb.io
  * Author URI:        https://github.com/staticweb-io/snapcache
