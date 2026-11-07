@@ -394,7 +394,8 @@ if (!class_exists('Memcached')) {
 			}
 
 			$expire = self::to_memcache_expiration($expire);
-			if ($this->mc->add($k, $data, $expire)) {
+			$added = $this->mc->add($k, $data, $expire);
+			if ($added) {
 				$this->local_cache[$k] = self::maybe_clone($data);
 				return true;
 			}
@@ -443,7 +444,8 @@ if (!class_exists('Memcached')) {
 			// iterate over many add() calls.
 			foreach ($data as $key => $v) {
 				$k = $this->cache_key($key, $group);
-				if ($this->mc->add($k, $v, $expire)) {
+				$added = $this->mc->add($k, $v, $expire);
+				if ($added) {
 					$this->local_cache[$k] = self::maybe_clone($v);
 					$arr[$key] = true;
 				} else {
@@ -498,7 +500,8 @@ if (!class_exists('Memcached')) {
 				$this->fetch_all();
 			}
 
-			if ($this->mc->delete($k)) {
+			$deleted = $this->mc->delete($k);
+			if ($deleted) {
 				$this->local_cache[$k] = $this->local_missing_marker;
 				return true;
 			}
@@ -592,7 +595,8 @@ if (!class_exists('Memcached')) {
 		 */
 		public function flush(): bool
 		{
-			return $this->mc->flush() && $this->flush_runtime();
+			$flushed = $this->mc->flush();
+			return $flushed && $this->flush_runtime();
 		}
 
 		/**

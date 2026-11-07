@@ -32,6 +32,27 @@ class ScenarioRunner {
     }
 
     /**
+     * The scenario's steps as separate PHP strings, to run in separate
+     * requests so that reads go past the local cache. Returns null if the
+     * scenario depends on state that only lasts for a request.
+     *
+     * @param array<mixed> $scenario
+     * @return list<string>|null
+     */
+    public static function buildPhpPerStep( array $scenario ): ?array {
+        $steps = $scenario['steps'] ?? [];
+        $dos = array_column( $steps, 'do' );
+        if ( array_intersect( [ 'add_non_persistent_groups', 'flush_runtime' ], $dos ) !== [] ) {
+            return null;
+        }
+        $php = [ 'wp_cache_flush();' ];
+        foreach ( $steps as $i => $step ) {
+            $php[] = self::buildStepPhp( $i + 1, $step );
+        }
+        return $php;
+    }
+
+    /**
      * @param array<mixed> $step
      */
     private static function buildStepPhp( int $num, array $step ): string {

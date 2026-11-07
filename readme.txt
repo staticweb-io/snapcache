@@ -21,6 +21,7 @@ See the Benchmarks section for performance results.
 = Features =
 
 * Persistent object cache using Memcached
+* Optional APCu cache in front of Memcached
 * Automatic prefetching of frequently accessed keys
 * WP-CLI commands for inspecting and managing the cache
 * Continues to operate even if Memcached is unreachable

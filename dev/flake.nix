@@ -72,6 +72,13 @@
             else
               ""
           );
+          # For testing that the drop-in continues to work
+          # even if an extension is later removed.
+          phpWithoutExtension =
+            name:
+            pkgs.${phpPackage}.withExtensions (
+              { enabled, all }: enabled ++ builtins.filter (e: e.extensionName != name) [ all.apcu all.memcached ]
+            );
           phpExtensionsFn =
             { enabled, all }:
             enabled
@@ -325,12 +332,15 @@
                       # mkComposerVendor strips vendor/bin/; regenerate before using rector et al
                       COMPOSER_DISABLE_NETWORK=1 composer --no-cache --no-interaction --optimize-autoloader install
 
+                      PHP_WITHOUT_APCU="${phpWithoutExtension "apcu"}/bin/php"
+                      PHP_WITHOUT_MEMCACHED="${phpWithoutExtension "memcached"}/bin/php"
                       WORDPRESS_DIR="$(realpath ./data/wordpress1)"
-                      export WORDPRESS_DIR
+                      export PHP_WITHOUT_APCU PHP_WITHOUT_MEMCACHED WORDPRESS_DIR
                       php -d sys_temp_dir="$TMPDIR" vendor/bin/phpunit --do-not-cache-result --testsuite Integration
                     '';
                   };
                   depends_on."mysql1-configure".condition = "process_completed_successfully";
+                  depends_on."nginx1".condition = "process_healthy";
                   depends_on."wordpress1".condition = "process_completed_successfully";
                 };
               settings.processes."wordpress1" = {

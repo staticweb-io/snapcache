@@ -4,6 +4,16 @@ namespace SnapCache;
 
 class Memcached {
     /**
+     * Returns true if the APCu extension is available.
+     * apc.enable_cli isn't checked, because the object cache
+     * is for the web server's PHP, which WP-CLI may be installing it for.
+     */
+    public static function apcuAvailable(): bool {
+        return extension_loaded( 'apcu' )
+            && filter_var( ini_get( 'apc.enabled' ), FILTER_VALIDATE_BOOLEAN );
+    }
+
+    /**
      * Returns true if the memcached extension is
      * available.
      */

@@ -61,6 +61,9 @@
     <exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />
   </rule>
   <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+  <rule ref="Generic.Classes.DuplicateClassName">
+    <exclude-pattern>src/drop-in/*</exclude-pattern>
+  </rule>
   <rule ref="Generic.Classes.OpeningBraceSameLine.BraceOnNewLine">
     <exclude-pattern>src/drop-in/*</exclude-pattern>
   </rule>

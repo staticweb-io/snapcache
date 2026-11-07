@@ -62,6 +62,20 @@ class Controller {
             3,
         );
 
+        add_action(
+            'add_option_snapcache_use_apcu',
+            fn() => self::installObjectCache(),
+            10,
+            0,
+        );
+
+        add_action(
+            'update_option_snapcache_use_apcu',
+            fn() => self::installObjectCache(),
+            10,
+            0,
+        );
+
         if ( is_admin() ) {
             Admin\Controller::addUIElements();
         }
@@ -156,14 +170,20 @@ class Controller {
      *   the `snapcache_object_cache` option === "memcached"
      *   and we can get a connection to memcached.
      * - There is an existing SnapCache object-cache.php
-     *   and the version does not match our current version.
+     *   and its version or use of APCu does not match
+     *   what we would install now.
+     *
+     * @param bool $force Install without checking any of these.
+     * @param bool $apcu Install the APCu variant whatever this PHP has.
      */
     public static function installObjectCache(
         bool $force = false,
+        bool $apcu = false,
     ): void {
         if ( $force ) {
             FilesHelper::copyFile(
-                SNAPCACHE_PATH . 'src/drop-in/object-cache-memcached.php',
+                SNAPCACHE_PATH . 'src/drop-in/object-cache-memcached'
+                . ( $apcu || self::shouldUseApcu() ? '-apcu' : '' ) . '.php',
                 WP_CONTENT_DIR . '/object-cache.php',
             );
             if ( Options::getObjectCacheType() !== 'memcached' ) {
@@ -182,10 +202,27 @@ class Controller {
                     self::installObjectCache( true );
                 }
             }
-        } elseif ( $obj_cache['TextDomain'] === 'snapcache'
-                && $obj_cache['Version'] !== SNAPCACHE_VERSION ) {
-            self::installObjectCache( true );
+        } elseif ( $obj_cache['TextDomain'] === 'snapcache' ) {
+            if ( $obj_cache['Version'] !== SNAPCACHE_VERSION
+                || self::installedDropInHasApcu() !== self::shouldUseApcu() ) {
+                self::installObjectCache( true );
+            }
         }
+    }
+
+    private static function installedDropInHasApcu(): bool {
+        $obj_cache = get_dropins()['object-cache.php'] ?? null;
+        return $obj_cache !== null && str_contains( $obj_cache['Description'], 'APCu' );
+    }
+
+    /**
+     * WP-CLI's PHP can lack extensions that the web server's PHP has,
+     * so without APCu here, it keeps what was installed before.
+     */
+    private static function shouldUseApcu(): bool {
+        return Options::useApcu()
+            && ( Memcached::apcuAvailable()
+                || ( defined( 'WP_CLI' ) && self::installedDropInHasApcu() ) );
     }
 
     /**

@@ -64,6 +64,16 @@ class SettingsMain {
             ]
         );
 
+        register_setting(
+            'snapcache',
+            'snapcache_use_apcu',
+            [
+                'type' => 'string',
+                'sanitize_callback' => fn( mixed $v ): string => $v ? '1' : '0',
+                'default' => '1',
+            ]
+        );
+
         add_settings_section(
             'snapcache_settings_section',
             'Object Cache',
@@ -83,6 +93,15 @@ class SettingsMain {
             'snapcache_memcached_servers',
             'Memcached Servers',
             self::field_memcached_servers( ... ),
+            'snapcache_main',
+            'snapcache_settings_section',
+            [ 'class' => 'snapcache-memcached-field' ],
+        );
+
+        add_settings_field(
+            'snapcache_use_apcu',
+            'APCu',
+            self::field_use_apcu( ... ),
             'snapcache_main',
             'snapcache_settings_section',
             [ 'class' => 'snapcache-memcached-field' ],
@@ -253,6 +272,27 @@ class SettingsMain {
             </p>
                 <?php
             endif;
+    }
+
+    public static function field_use_apcu(): void {
+        $available = Memcached::apcuAvailable();
+        ?>
+        <input type="hidden" name="snapcache_use_apcu" value="0" />
+        <label>
+            <input type="checkbox" name="snapcache_use_apcu" value="1"
+            <?php checked( Options::useApcu() ); ?> />
+            Use APCu for accelerated caching
+            <?php
+            if ( ! $available ) {
+                echo '(APCu extension not available)';
+            }
+            ?>
+        </label>
+        <p class="description">
+            Use APCu as a write-through cache. This can improve
+            performance, but only works in a single-server setup.
+        </p>
+        <?php
     }
 
     private static function renderStats(): void {

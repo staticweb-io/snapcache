@@ -23,4 +23,12 @@ class ITEnv {
         }
         return self::$wordpress_dir;
     }
+
+    /**
+     * The URL of the web server in front of PHP-FPM
+     */
+    public static function getSiteUrl(): string {
+        $url = getenv( 'SITE_URL' );
+        return $url === false ? 'http://127.0.0.1:8889' : $url;
+    }
 }

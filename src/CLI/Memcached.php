@@ -44,6 +44,10 @@ class Memcached {
      *
      * ## OPTIONS
      *
+     * [--apcu]
+     * : Install APCu-based object cache even if WP-CLI's
+     *   PHP doesn't have the extension available.
+     *
      * [--force]
      * : Install even if a connection to memcached
      *   cannot be verified.
@@ -53,7 +57,10 @@ class Memcached {
             $args,
             $assoc_args,
             [],
-            [ 'force' => [] ],
+            [
+                'apcu' => [],
+                'force' => [],
+            ],
         );
 
         if ( ! $cfg['force'] && ! self::getMemcached() instanceof \Memcached ) {
@@ -64,7 +71,12 @@ class Memcached {
             return;
         }
 
-        Controller::installObjectCache( true );
+        $apcu = (bool) $cfg['apcu'];
+        if ( $apcu ) {
+            update_option( 'snapcache_use_apcu', '1', false );
+        }
+
+        Controller::installObjectCache( true, $apcu );
         Controller::clearAllOptionsCache();
     }
 

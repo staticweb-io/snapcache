@@ -45,6 +45,17 @@ class Options {
     }
 
     /**
+     * Returns the `snapcache_use_apcu` option, which defaults to true
+     * so that APCu is used wherever the extension is available.
+     */
+    public static function useApcu(): bool {
+        return filter_var(
+            get_option( 'snapcache_use_apcu', true ),
+            FILTER_VALIDATE_BOOLEAN,
+        );
+    }
+
+    /**
      * Returns true if memcached servers are set by wp-config.php.
      * If false, servers are set by the `snapcache_object_cache` option.
      */

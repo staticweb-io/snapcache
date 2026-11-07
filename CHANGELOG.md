@@ -1,6 +1,7 @@
 ## Unreleased
 
 - End support for PHP 8.1.
+- Add an option to use an APCu write-through cache in front of memcached. This is enabled by default.
 - Encode cache keys so that similar keys can't collide.
 - Fix decr and stop incr and decr at 0.
 - Return the same results as core in non-persistent groups.
