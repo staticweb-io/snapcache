@@ -49,6 +49,7 @@ class ScenarioRunner {
         // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
         $group = var_export( (string) ( $step['group'] ?? '' ), true );
         $expiration = (int) ( $step['expiration'] ?? 0 );
+        $offset = (int) ( $step['offset'] ?? 1 );
 
         $call = match ( $do ) {
             'set'             => "wp_cache_set({$key}, {$value}, {$group}, {$expiration})",
@@ -59,9 +60,13 @@ class ScenarioRunner {
             'set_multiple'    => "wp_cache_set_multiple({$data}, {$group}, {$expiration})",
             'add_multiple'    => "wp_cache_add_multiple({$data}, {$group}, {$expiration})",
             'delete_multiple' => "wp_cache_delete_multiple({$keys}, {$group})",
+            'get_multiple'    => "wp_cache_get_multiple({$keys}, {$group})",
+            'incr'            => "wp_cache_incr({$key}, {$offset}, {$group})",
+            'decr'            => "wp_cache_decr({$key}, {$offset}, {$group})",
             'add_non_persistent_groups'
                                 => "wp_cache_add_non_persistent_groups({$groups})",
             'flush'           => 'wp_cache_flush()',
+            'flush_runtime'   => 'wp_cache_flush_runtime()',
             default           => throw new \RuntimeException( "Unknown operation: {$do}" ),
         };
 
