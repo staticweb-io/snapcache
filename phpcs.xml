@@ -61,4 +61,52 @@
     <exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />
   </rule>
   <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+  <rule ref="Generic.Classes.OpeningBraceSameLine.BraceOnNewLine">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="Generic.WhiteSpace.ArbitraryParenthesesSpacing.SpaceAfterOpen">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="Generic.WhiteSpace.ArbitraryParenthesesSpacing.SpaceBeforeClose">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="Generic.WhiteSpace.DisallowTabIndent.TabsUsed">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="NormalizedArrays.Arrays.ArrayBraceSpacing.SpaceAfterArrayOpenerSingleLine">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="NormalizedArrays.Arrays.ArrayBraceSpacing.SpaceBeforeArrayCloserSingleLine">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterOpenBracket">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="PEAR.Functions.FunctionCallSignature.SpaceBeforeCloseBracket">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing.SpacingAfterOpen">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing.SpacingBeforeClose">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="Squiz.Functions.MultiLineFunctionDeclaration.NewlineBeforeOpenBrace">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.Arrays.ArrayKeySpacingRestrictions.NoSpacesAroundArrayKeys">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.WhiteSpace.ControlStructureSpacing.NoSpaceAfterOpenParenthesis">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.WhiteSpace.ControlStructureSpacing.NoSpaceBeforeCloseParenthesis">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.WhiteSpace.OperatorSpacing.NoSpaceAfter">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.WhiteSpace.OperatorSpacing.NoSpaceBefore">
+    <exclude-pattern>src/drop-in/object-cache.php</exclude-pattern>
+  </rule>
 </ruleset>
