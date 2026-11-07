@@ -1,0 +1,122 @@
+description = "decr works and incr and decr stop at 0"
+
+[[steps]]
+do = "set"
+key = "n"
+value = 8
+group = "c-grp"
+returns = true
+
+[[steps]]
+do = "decr"
+key = "n"
+offset = 2
+group = "c-grp"
+returns = 6
+
+[[steps]]
+do = "get"
+key = "n"
+group = "c-grp"
+returns = 6
+
+# decr stops at 0, like WordPress core
+
+[[steps]]
+do = "decr"
+key = "n"
+offset = 10
+group = "c-grp"
+returns = 0
+
+[[steps]]
+do = "get"
+key = "n"
+group = "c-grp"
+returns = 0
+
+[[steps]]
+do = "set"
+key = "p"
+value = 100
+group = "c-grp"
+returns = true
+
+[[steps]]
+do = "flush_runtime"
+
+[[steps]]
+do = "decr"
+key = "p"
+offset = 1
+group = "c-grp"
+returns = 99
+
+[[steps]]
+do = "flush_runtime"
+
+[[steps]]
+do = "get"
+key = "p"
+group = "c-grp"
+returns = 99
+
+# A negative offset reverses the operation.
+
+[[steps]]
+do = "incr"
+key = "p"
+offset = -9
+group = "c-grp"
+returns = 90
+
+[[steps]]
+do = "decr"
+key = "p"
+offset = -10
+group = "c-grp"
+returns = 100
+
+[[steps]]
+do = "decr"
+key = "missing"
+group = "c-grp"
+returns = false
+
+[[steps]]
+do = "add_non_persistent_groups"
+groups = ["c-np"]
+
+[[steps]]
+do = "set"
+key = "n"
+value = 5
+group = "c-np"
+returns = true
+
+[[steps]]
+do = "decr"
+key = "n"
+offset = 2
+group = "c-np"
+returns = 3
+
+[[steps]]
+do = "decr"
+key = "n"
+offset = 10
+group = "c-np"
+returns = 0
+
+[[steps]]
+do = "get"
+key = "n"
+group = "c-np"
+returns = 0
+
+[[steps]]
+do = "incr"
+key = "n"
+offset = -1
+group = "c-np"
+returns = 0

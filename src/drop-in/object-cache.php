@@ -809,7 +809,7 @@ if (!class_exists('Memcached')) {
 			if (isset($this->non_persistent_groups[$group])) {
 				$v = $this->non_persistent_groups[$group][$k] ?? null;
 				if (is_numeric($v)) {
-					$v += $offset;
+					$v = max(0, $v + $offset);
 					$this->non_persistent_groups[$group][$k] = $v;
 					return $v;
 				}
@@ -817,7 +817,13 @@ if (!class_exists('Memcached')) {
 				return false;
 			}
 
-			$result = $this->mc->increment($k, $offset);
+			if ($this->preseed_keys) {
+				$this->fetch_all();
+			}
+
+			// Memcached stops at 0, as WordPress does, but rejects a negative offset.
+			$result = $offset < 0
+				? $this->mc->decrement($k, -$offset) : $this->mc->increment($k, $offset);
 			if ($result === false) {
 				// We don't know the state of the memcached item
 				unset($this->local_cache[$k]);
