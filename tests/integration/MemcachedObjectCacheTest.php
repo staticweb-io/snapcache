@@ -13,6 +13,11 @@ final class MemcachedObjectCacheTest extends TestCase {
         $this->evalEmbeddedTest( 'test-get-set-add-replace.php' );
     }
 
+    public function testGetMultipleNull(): void
+    {
+        $this->evalEmbeddedTest( 'test-get-multiple-null.php' );
+    }
+
     /**
      * Test that cache values persist between requests
      */

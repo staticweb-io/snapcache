@@ -4,6 +4,7 @@
 - Encode cache keys so that similar keys can't collide.
 - Fix decr and stop incr and decr at 0.
 - Return the same results as core in non-persistent groups.
+- Return stored nulls from get_multiple.
 
 # 1.2.1 (2026-09-17)
 

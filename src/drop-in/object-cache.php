@@ -738,7 +738,7 @@ if (!class_exists('Memcached')) {
 					return array_fill_keys($keys, false);
 				}
 
-				return array_merge(array_fill_keys($keys, false), $local);
+				return array_replace(array_fill_keys($keys, false), $local);
 			}
 
 			$ks_to_keys ??= array_combine($ks, $keys);
@@ -748,7 +748,7 @@ if (!class_exists('Memcached')) {
 			if ($local === null || $local === []) {
 				$arr = [];
 				foreach ($ks_to_keys as $k => $key) {
-					if (isset($result[$k])) {
+					if (array_key_exists($k, $result)) {
 						$v = $result[$k];
 						$this->local_cache[$k] = self::maybe_clone($v);
 						$arr[$key] = $v;
@@ -763,11 +763,11 @@ if (!class_exists('Memcached')) {
 
 			$arr = [];
 			foreach ($ks_to_keys as $k => $key) {
-				if (isset($result[$k])) {
+				if (array_key_exists($k, $result)) {
 					$v = $result[$k];
 					$this->local_cache[$k] = self::maybe_clone($v);
 					$arr[$key] = $v;
-				} elseif (isset($local[$key])) {
+				} elseif (array_key_exists($key, $local)) {
 					$arr[$key] = $local[$key];
 				} else {
 					unset($this->local_cache[$k]);
