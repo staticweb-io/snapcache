@@ -4,6 +4,7 @@
 // a theme or plugin passes them.
 
 wp_cache_set( 'bad-args', 'v' );
+wp_cache_set( 'bad-args-count', 1 );
 
 $cases = [
     'empty key' => [ fn() => wp_cache_get( '' ), false ],
@@ -14,6 +15,7 @@ $cases = [
     'array key' => [ fn() => wp_cache_set( [ 'a' ], 'v' ), false ],
     'empty key in multiple' => [ fn() => wp_cache_get_multiple( [ '' ] ), [] ],
     'not an array' => [ fn() => wp_cache_get_multiple( 'a' ), [] ],
+    'numeric string offset' => [ fn() => wp_cache_incr( 'bad-args-count', '2' ), 3 ],
     'numeric string expiration' => [ fn() => wp_cache_set( 'bad-args', 'v2', '', '60' ), true ],
     'numeric string read' => [ fn() => wp_cache_get( 'bad-args' ), 'v2' ],
     'null group' => [ fn() => wp_cache_get( 'bad-args', null ), false ],

@@ -1197,7 +1197,12 @@ if (!class_exists('Memcached')) {
 	{
 		global $wp_object_cache;
 		try {
-			return $wp_object_cache->add($key, $data, $group, $expire);
+			return $wp_object_cache->add(
+				$key,
+				$data,
+				$group,
+				is_numeric($expire) ? (int) $expire : $expire
+			);
 		} catch (Throwable $e) {
 			error_log('SnapCache object cache error: ' . $e->getMessage());
 			return false;
@@ -1219,7 +1224,11 @@ if (!class_exists('Memcached')) {
 	{
 		global $wp_object_cache;
 		try {
-			return $wp_object_cache->add_multiple($data, $group, $expire);
+			return $wp_object_cache->add_multiple(
+				$data,
+				$group,
+				is_numeric($expire) ? (int) $expire : $expire
+			);
 		} catch (Throwable $e) {
 			error_log('SnapCache object cache error: ' . $e->getMessage());
 			return [];
@@ -1246,7 +1255,11 @@ if (!class_exists('Memcached')) {
 	{
 		global $wp_object_cache;
 		try {
-			return $wp_object_cache->decr($key, $offset, $group);
+			return $wp_object_cache->decr(
+				$key,
+				is_numeric($offset) ? (int) $offset : $offset,
+				$group
+			);
 		} catch (Throwable $e) {
 			error_log('SnapCache object cache error: ' . $e->getMessage());
 			return false;
@@ -1323,7 +1336,11 @@ if (!class_exists('Memcached')) {
 	{
 		global $wp_object_cache;
 		try {
-			return $wp_object_cache->incr($key, $offset, $group);
+			return $wp_object_cache->incr(
+				$key,
+				is_numeric($offset) ? (int) $offset : $offset,
+				$group
+			);
 		} catch (Throwable $e) {
 			error_log('SnapCache object cache error: ' . $e->getMessage());
 			return false;
@@ -1347,7 +1364,12 @@ if (!class_exists('Memcached')) {
 	{
 		global $wp_object_cache;
 		try {
-			return $wp_object_cache->replace($key, $data, $group, $expire);
+			return $wp_object_cache->replace(
+				$key,
+				$data,
+				$group,
+				is_numeric($expire) ? (int) $expire : $expire
+			);
 		} catch (Throwable $e) {
 			error_log('SnapCache object cache error: ' . $e->getMessage());
 			return false;
@@ -1358,7 +1380,12 @@ if (!class_exists('Memcached')) {
 	{
 		global $wp_object_cache;
 		try {
-			return $wp_object_cache->set($key, $data, $group, $expire);
+			return $wp_object_cache->set(
+				$key,
+				$data,
+				$group,
+				is_numeric($expire) ? (int) $expire : $expire
+			);
 		} catch (Throwable $e) {
 			error_log('SnapCache object cache error: ' . $e->getMessage());
 			return false;
@@ -1369,7 +1396,11 @@ if (!class_exists('Memcached')) {
 	{
 		global $wp_object_cache;
 		try {
-			return $wp_object_cache->set_multiple($data, $group, $expire);
+			return $wp_object_cache->set_multiple(
+				$data,
+				$group,
+				is_numeric($expire) ? (int) $expire : $expire
+			);
 		} catch (Throwable $e) {
 			error_log('SnapCache object cache error: ' . $e->getMessage());
 			return [];
